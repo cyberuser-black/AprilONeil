@@ -5,9 +5,9 @@
 #include <iostream>
 #include <unistd.h>
 #include "Engine.h"
-#include "parsers/ParserWrapper.h"
-#include "conditions/ConditionWrapper.h"
-#include "actions/ActionWrapper.h"
+#include "wrappers/parsers/ParserWrapper.h"
+#include "wrappers/conditions/ConditionWrapper.h"
+#include "wrappers/actions/ActionWrapper.h"
 
 namespace apriloneil {
     Engine::Engine(const ConfigurationName &configuration_name) {

@@ -6,7 +6,7 @@
 #define APRILONEIL_PARSERWRAPPER_H
 
 #include <utility>
-#include "../types.h"
+#include "../../types.h"
 
 namespace apriloneil {
     class ParserWrapper {

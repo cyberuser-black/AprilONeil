@@ -5,9 +5,9 @@
 #ifndef APRILONEIL_LUAWRAPPER_H
 #define APRILONEIL_LUAWRAPPER_H
 
-#include "conditions/ICondition.h"
-#include "actions/IAction.h"
-#include "../include/Selene/include/selene/State.h"
+#include "../../include/Selene/include/selene/State.h"
+#include "../types.h"
+#include "parsers/ParserWrapper.h"
 
 namespace apriloneil {
     class LuaWrapper {

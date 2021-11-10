@@ -7,5 +7,5 @@ include_directories(${INCLUDE_DIRS})
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(AprilONeil src/main.cpp src/Engine.cpp src/Engine.h src/types.h src/rules/Rule.h src/conditions/ICondition.h src/conditions/IsNoChange.cpp src/conditions/IsNoChange.h src/rules/Rule.cpp src/parsers/ParserWrapper.cpp src/parsers/ParserWrapper.h src/actions/IAction.h src/actions/LogCurrentParse.cpp src/actions/LogCurrentParse.h include/json11/json11.cpp include/json11/json11.hpp src/conditions/ConditionWrapper.cpp src/conditions/ConditionWrapper.h src/LuaWrapper.cpp src/LuaWrapper.h src/actions/ActionWrapper.cpp src/actions/ActionWrapper.h)
+add_executable(AprilONeil src/main.cpp src/Engine.cpp src/Engine.h src/types.h src/wrappers/rules/Rule.h src/wrappers/rules/Rule.cpp src/wrappers/parsers/ParserWrapper.cpp src/wrappers/parsers/ParserWrapper.h include/json11/json11.cpp include/json11/json11.hpp src/wrappers/conditions/ConditionWrapper.cpp src/wrappers/conditions/ConditionWrapper.h src/wrappers/LuaWrapper.cpp src/wrappers/LuaWrapper.h src/wrappers/actions/ActionWrapper.cpp src/wrappers/actions/ActionWrapper.h)
 target_link_libraries(AprilONeil ${LUA_LIBRARY} ${CMAKE_DL_LIBS})

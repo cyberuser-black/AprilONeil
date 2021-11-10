@@ -5,13 +5,14 @@
 #ifndef APRILONEIL_CONDITIONWRAPPER_H
 #define APRILONEIL_CONDITIONWRAPPER_H
 
-#include "ICondition.h"
+#include "../../types.h"
+#include "../parsers/ParserWrapper.h"
 
 namespace apriloneil {
-    class ConditionWrapper : public ICondition{
+    class ConditionWrapper {
     public:
         ConditionWrapper(PathToLuaCondition lua_condition_path) : path(lua_condition_path){};
-        bool evaluate(const ParserWrapper::ParseHistory &parsed_history) const override;
+        bool evaluate(const ParserWrapper::ParseHistory &parsed_history) const;
         std::string name() const;
 
     private:

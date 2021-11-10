@@ -7,8 +7,8 @@
 
 #include <unordered_map>
 #include <vector>
-#include "parsers/ParserWrapper.h"
-#include "rules/Rule.h"
+#include "wrappers/parsers/ParserWrapper.h"
+#include "wrappers/rules/Rule.h"
 
 namespace apriloneil {
     class Engine {
