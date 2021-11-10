@@ -1,0 +1,9 @@
+[submodule "Lua-Adapter"]
+	path = Lua-Adapter
+	url = https://github.com/JlnWntr/Lua-Adapter.git
+[submodule "Selene"]
+	path = Selene
+	url = https://github.com/jeremyong/Selene.git
+[submodule "json11"]
+	path = json11
+	url = https://github.com/dropbox/json11
