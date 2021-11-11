@@ -9,16 +9,21 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
+#pragma pack(1)
 
-/* Available request types */
-enum RequestType {
+#define SERVER_IP  "localhost"
+#define PORT 5001
+
+/* Available analyze_request types */
+typedef enum {
     OPENFILE, LISTDIR, READLINK
-};
+} RequestType;
 
 /* Available answer types */
-enum AnswerType {
+typedef enum {
     NO_DIFF, NEW_DATA, ERROR
-};
+} AnswerType;
 
 typedef size_t AnswerSize;
 typedef long int CheckSum;
@@ -41,11 +46,11 @@ typedef struct {
 } Answer;
 
 
-AnswerSize request(char *request, char **answer);
+AnswerSize analyze_request(char *request, char **answer);
+Request* get_request_from_socket(int sock);
 
 #ifdef __cplusplus
 } // extern "C" closure
 #endif
 
 #endif //ROOTAGENTC___ROOT_API_H
-

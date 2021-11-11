@@ -9,7 +9,10 @@
 void doprocessing (int sock);
 
 int main( int argc, char *argv[] ) {
-   int sockfd, newsockfd, portno, clilen;
+    printf("server started...\n");
+
+    int sockfd, newsockfd, portno;
+   unsigned int clilen;
    char buffer[256];
    struct sockaddr_in serv_addr, cli_addr;
    int n, pid;
@@ -24,7 +27,7 @@ int main( int argc, char *argv[] ) {
 
    /* Initialize socket structure */
    bzero((char *) &serv_addr, sizeof(serv_addr));
-   portno = 5001;
+   portno = PORT;
 
    serv_addr.sin_family = AF_INET;
    serv_addr.sin_addr.s_addr = INADDR_ANY;
@@ -40,7 +43,6 @@ int main( int argc, char *argv[] ) {
       * process will go in sleep mode and will wait
       * for the incoming connection
    */
-
    listen(sockfd,5);
    clilen = sizeof(cli_addr);
 
@@ -74,25 +76,27 @@ int main( int argc, char *argv[] ) {
 }
 
 void doprocessing (int sock) {
-   size_t n;
-   char buffer[256];
-   bzero(buffer,256);
-   n = read(sock,buffer,255);
-   if (n < 0) {
-      perror("ERROR reading from socket");
-      exit(1);
-   }
-   char* answer = NULL;
-   n = request(buffer, &answer);
+    size_t n;
+    Request *request_p = get_request_from_socket(sock);
 
+    char *answer = NULL;
+    n = analyze_request((char *) request_p, &answer);
 
-//   printf("Here is the message: %s\n",buffer);
-   n = write(sock,buffer,n);
+    if(request_p != NULL)
+    {
+        free(request_p);
+    }
 
-   if (n < 0) {
-      perror("ERROR writing to socket");
-      exit(1);
-   }
-
+    printf("writing to socket...\n");
+    n = write(sock, (char *) answer, n);
+    printf("written %ld bytes\n", n);
+    if (n < 0) {
+        perror("ERROR writing to socket");
+        exit(1);
+    }
+    if (answer != NULL)
+    {
+        free(answer);
+    }
 }
 
