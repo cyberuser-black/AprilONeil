@@ -24,10 +24,6 @@ namespace apriloneil {
         ParseHistory history;
         const PathToLuaParser path;
 
-        static void invoke_lua_parser(ParsedData *out_parsed_data);
-
-        static void invoke_lua_selene(ParsedData *out_parsed_data);
-
         void invoke_lua_wrapper(ParsedData *out_parsed_data);
     };
 }

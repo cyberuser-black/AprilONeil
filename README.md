@@ -18,5 +18,21 @@
    ```shell
    sudo luarocks install lunajson
    ```
-5) Clone this repository
-6) 
+4) Clone this repository
+   ```shell
+   git clone https://github.com/cyberuser-black/AprilONeil.git
+   ```
+5) Build the project
+   ```shell
+   mkdir build
+   cd build
+   cmake .. && make
+   ```
+
+## Usage
+1) Go into the build directory, and execute the binary
+   ```shell
+   cd build
+   ./AprilONeil
+   ```
+   

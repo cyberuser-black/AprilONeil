@@ -3,6 +3,7 @@
 //
 
 #include "LuaWrapper.h"
+#include "../../root_api/rootapi.h"
 
 bool apriloneil::LuaWrapper::evaluate(const apriloneil::PathToLuaCondition &condition,
                                       apriloneil::ParserWrapper::ParseHistory parsed_history) {
@@ -16,8 +17,12 @@ bool apriloneil::LuaWrapper::evaluate(const apriloneil::PathToLuaCondition &cond
 
 apriloneil::ParsedData apriloneil::LuaWrapper::parse(const apriloneil::PathToLuaParser &parser) {
     sel::State lua(true);
+
+    // TODO: Load the root_api correctly
+    lua["rootapi_readfile"] = &RootAPI::readfile;
+
     lua.Load(parser);
-    std::string raw_json = lua["parse"]();
+    std::string raw_json = lua["parse"]("dummyfile.txt");
     std::string parse_error;
     json11::Json parsed_json = json11::Json::parse(raw_json, parse_error);
     return parsed_json;

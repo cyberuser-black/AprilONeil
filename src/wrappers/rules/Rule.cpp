@@ -8,7 +8,9 @@
 namespace apriloneil {
     void Rule::run(const ParserWrapper::ParseHistory &parse_history) const {
         std::cout << "[C++] [Rule] Evaluating '" << condition->name() << "'..." << std::endl;
-        if (condition->evaluate(parse_history)){
+        bool result = condition->evaluate(parse_history);
+        std::cout << "[C++] [Rule] Result = " << result << std::endl;
+        if (result){
             std::cout << "[C++] [Rule] Condition holds! Performing '" << action->name() << "'..." << std::endl;
             action->do_action(parse_history);
         }
