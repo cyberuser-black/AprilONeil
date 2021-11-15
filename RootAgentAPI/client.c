@@ -43,16 +43,21 @@ Answer* get_answer_from_socket(int sock_id)
         perror("ERROR reading from socket");
         exit(1);
     }
-    printf("%ld bytes loaded\n", n);
-    printf("Answer type is: %d\n", answer_p->answer_type);
-    printf("Answer checksum is : %ld\n", answer_p->data_checksum);
-    printf("Answer data len is: %ld\n", answer_p->data_len);
-    printf("Answer data is: \n");
-    for(int i = 0; i < answer_p->data_len; i++)
+    if(answer_p->answer_type == NO_DIFF)
     {
-        printf("%c", answer_p->data[i]);
+        printf("\nNo change\n\n");
     }
-    printf("\n");
+    else {
+        printf("%ld bytes loaded\n", n);
+        printf("Answer type is: %d\n", answer_p->answer_type);
+        printf("Answer checksum is : %ld\n", answer_p->data_checksum);
+        printf("Answer data len is: %ld\n", answer_p->data_len);
+        printf("Answer data is: \n");
+        for (int i = 0; i < answer_p->data_len; i++) {
+            printf("%c", answer_p->data[i]);
+        }
+        printf("\n");
+    }
 
     return answer_p;
 }
@@ -121,7 +126,6 @@ Answer* send_request_to_server(RequestType request_type, CheckSum old_data_check
     /* Now read server response */
     Answer* myAnswer = get_answer_from_socket(sock_fd);
     return myAnswer;
-
 }
 
 Answer* open_file(char* path, size_t path_len, CheckSum old_data_checksum)
@@ -141,76 +145,13 @@ Answer* open_file(char* path, size_t path_len, CheckSum old_data_checksum)
 
 
 int main(int argc, char *argv[]) {
-    char path[13] = "/proc/meminfo";
-    Answer * answer = open_file(path, strlen(path), 0);
-    free(answer);
-//   int sockfd, portno;
-//   size_t n;
-//   struct sockaddr_in serv_addr;
-//   struct hostent *server;
-//
-//   if (argc < 7) {
-//      fprintf(stderr,"usage %s hostname port request_type(openfile=0, listdir=1, readlink=2)"
-//                     " old_data_checksum path_len path\n", argv[0]);
-//      exit(0);
-//   }
-//
-//   /* Get request details from user */
-//   portno = atoi(argv[2]);
-//   RequestType request_type = atoi(argv[3]);
-//   CheckSum checksum = atol(argv[4]);
-//   size_t path_len = atol(argv[5]);
-//   char* path = (char*) malloc(sizeof(char) * path_len);
-//   strncpy(path, argv[6], path_len);
-//
-//   /* Create a socket point */
-//   sockfd = socket(AF_INET, SOCK_STREAM, 0);
-//
-//   if (sockfd < 0) {
-//      perror("ERROR opening socket");
-//      exit(1);
-//   }
-//
-//   server = gethostbyname(argv[1]);
-//
-//   if (server == NULL) {
-//      fprintf(stderr,"ERROR, no such host\n");
-//      exit(0);
-//   }
-//
-//   bzero((char *) &serv_addr, sizeof(serv_addr));
-//   serv_addr.sin_family = AF_INET;
-//   bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
-//   serv_addr.sin_port = htons(portno);
-//
-//   /* Now connect to the server */
-//   if (connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
-//      perror("ERROR connecting");
-//      exit(1);
-//   }
-//
-//   Request * request = NULL;
-//   printf("creating request...\n");
-//   size_t request_size = create_request(&request, request_type, checksum, path, path_len);
-//
-//   /* Send message to the server */
-//   printf("writing to socket...\n");
-//   n = write(sockfd, (char*) request, request_size);
-//    printf("Wrriten %ld bytes\n", n);
-//   if (n < 0) {
-//      perror("ERROR writing to socket");
-//      exit(1);
-//   }
-//
-//   if(request != NULL)
-//   {
-//       free(request);
-//   }
-//
-//   /* Now read server response */
-//   Answer* myAnswer = get_answer_from_socket(sockfd);
-//   free(myAnswer);
-//
-//   return 0;
+    CheckSum old_data_checksum = 0;
+    for(int i = 0; i < 5; i ++)
+    {
+        char path[13] = "/proc/meminfo";
+        Answer * answer = open_file(path, strlen(path), old_data_checksum);
+        old_data_checksum = answer->data_checksum;
+        free(answer);
+    }
 }
 
