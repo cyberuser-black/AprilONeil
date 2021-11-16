@@ -1,1 +1,7 @@
-Kapara!!!
+MemTotal:        4001688 kB
+MemFree:          250184 kB
+MemAvailable:    1077712 kB
+Buffers:          267548 kB
+Cached:           528136 kB
+SwapCached:         2804 kB
+Active:          2065968 kB

@@ -6,7 +6,7 @@
 #include "ConditionWrapper.h"
 
 bool apriloneil::ConditionWrapper::evaluate(const apriloneil::ParserWrapper::ParseHistory &parsed_history) const {
-    int retval = LuaWrapper::evaluate(path, parsed_history);
+    int retval = LuaWrapper::evaluate(path, parsed_history.first.dump(), parsed_history.second.dump());
     return retval;
 }
 

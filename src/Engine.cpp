@@ -12,8 +12,8 @@
 namespace apriloneil {
     Engine::Engine(const ConfigurationName &configuration_name) {
         // TODO: Actually PARSE the parsers, conditions and actions, for the rules from configuration
-        PathToLuaParser lua_parser = "../lua/parsers/example_parser.lua";
-        PathToLuaCondition lua_condition = "../lua/conditions/example_condition.lua";
+        PathToLuaParser lua_parser = "../lua/parsers/meminfo.lua";//"../lua/parsers/example_parser.lua";
+        PathToLuaCondition lua_condition = "../lua/conditions/memfree_toolow.lua";//"../lua/conditions/example_condition.lua";
         PathToLuaAction lua_action = "../lua/actions/example_action.lua";
         auto *parser_wrapper = new ParserWrapper(lua_parser);
         auto *condition = new ConditionWrapper(lua_condition);

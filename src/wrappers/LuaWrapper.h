@@ -14,9 +14,12 @@ namespace apriloneil {
     public:
         static ParsedData parse(const PathToLuaParser &);
 
-        static bool evaluate(const PathToLuaCondition &, ParserWrapper::ParseHistory);
+        static bool evaluate(const PathToLuaCondition &condition,
+                             const std::string &jsonstr_a,
+                             const std::string &jsonstr_b);
 
-        static void do_action(const PathToLuaAction &, ParserWrapper::ParseHistory);
+        static void do_action(const apriloneil::PathToLuaAction &action,
+                              const std::string &jsonstr);
 
     };
 }

@@ -1,11 +1,11 @@
 lunajson = require('lunajson');
 
 print("[Lua] [example_condition] running...")
-function evaluate(a, b)
-    print("[Lua] [example_condition.evaluate] a = " .. a)
-    print("[Lua] [example_condition.evaluate] b = " .. b)
-    local json_a = lunajson.decode(a)
-    local json_b = lunajson.decode(b)
+function evaluate(jsonstr_a, jsonstr_a)
+    print("[Lua] [example_condition.evaluate] jsonstr_a = " .. jsonstr_a)
+    print("[Lua] [example_condition.evaluate] jsonstr_b = " .. jsonstr_b)
+    local json_a = lunajson.decode(jsonstr_a)
+    local json_b = lunajson.decode(jsonstr_b)
     local str_a = lunajson.encode(json_a)
     local str_b = lunajson.encode(json_b)
     print("[Lua] [example_condition.evaluate] evaluating (" .. str_a .. " == " .. str_b ..") ?")

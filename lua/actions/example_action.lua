@@ -1,8 +1,8 @@
 lunajson = require('lunajson');
 
 print("[Lua] [example_action] running...")
-function do_action(a, b) -- Assuming the following structure for a and b: {'result' : <something>}
-    local json_a = lunajson.decode(a)
-    local json_b = lunajson.decode(b)
-    print("[Lua] [example_action.do_action] DOING ACTION (to save the " .. json_a.result .. ")")
+function do_action(jsonstr_data)
+    print("[Lua] [example_action.do_action] jsonstr_data = " .. jsonstr_data)
+    local json_data = lunajson.decode(jsonstr_data)
+    print("[Lua] [example_action.do_action] DOING ACTION with " .. jsonstr_data)
 end
