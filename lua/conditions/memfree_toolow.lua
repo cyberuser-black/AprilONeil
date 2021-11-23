@@ -1,16 +1,17 @@
+print("[Lua] [memfree_toolow] running...")
+
 lunajson = require('lunajson');
 
-print("[Lua] [memfree_toolow] running...")
-function evaluate(jsonstr_a, jsonstr_b)
-    print("[Lua] [memfree_toolow.evaluate] jsonstr_a = " .. jsonstr_a)
-    if jsonstr_a == 'null' or jsonstr_a == nil then
-        print("[Lua] [memfree_toolow.evaluate] returning FALSE!")
-        return 0
-    end
+function evaluate()
+    print('[Lua] [memfree_toolow] calling get_data(\'../lua/data_sources/parsers/meminfo.lua\')...')
+    local data_current = get_data_current('../lua/data_sources/parsers/meminfo.lua')
+    print('[Lua] [memfree_toolow] data_current = '..data_current)
+    meminfo = lunajson.decode(data_current)
 
-    local memfree = tonumber(lunajson.decode(jsonstr_a)['MemFree'])
-    print("[Lua] [memfree_toolow.evaluate] evaluating (" .. memfree .. " < 250000) ?")
-    if (memfree < 250000) then
+    local memfree = meminfo['MemFree']
+
+    print("[Lua] [memfree_toolow.evaluate] evaluating (" .. memfree .. " < 200000) ?")
+    if (tonumber(memfree) < 200000) then
         print("[Lua] [memfree_toolow.evaluate] returning TRUE!")
         return 1
     end

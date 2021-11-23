@@ -8,19 +8,19 @@
 #include "../../types.h"
 #include "../conditions/ConditionWrapper.h"
 #include "../actions/ActionWrapper.h"
+#include "../../DataAccess.h"
 
 namespace apriloneil {
     class Rule {
     public:
-        Rule(const ParserWrapper* parser, const ConditionWrapper* condition, const ActionWrapper* action) : parser_id(parser->id), condition(condition), action(action){}
+        Rule(const ConditionWrapper* condition, const ActionWrapper* action) : _condition(condition), _action(action){}
 
     public:
-        void run(const ParserWrapper::ParseHistory& parse_history) const;
-        const ParserId parser_id;
+        void run(DataAccess *data_access) const;
 
     private:
-        const ConditionWrapper* condition;
-        const ActionWrapper* action;
+        const ConditionWrapper* _condition;
+        const ActionWrapper* _action;
     };
 }
 

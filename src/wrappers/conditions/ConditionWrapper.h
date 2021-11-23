@@ -6,17 +6,17 @@
 #define APRILONEIL_CONDITIONWRAPPER_H
 
 #include "../../types.h"
-#include "../parsers/ParserWrapper.h"
+#include "../data_sources/parsers/ParserWrapper.h"
 
 namespace apriloneil {
     class ConditionWrapper {
     public:
-        ConditionWrapper(PathToLuaCondition lua_condition_path) : path(lua_condition_path){};
-        bool evaluate(const ParserWrapper::ParseHistory &parsed_history) const;
+        ConditionWrapper(PathToLuaCondition lua_condition_path) : _lua_condition_path(lua_condition_path){};
+        bool evaluate() const;
         std::string name() const;
 
     private:
-        PathToLuaCondition path;
+        PathToLuaCondition _lua_condition_path;
     };
 };
 

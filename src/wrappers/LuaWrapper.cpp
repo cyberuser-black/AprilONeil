@@ -4,17 +4,19 @@
 
 #include "LuaWrapper.h"
 #include "../../root_api/rootapi.h"
+#include "../DataAccess.h"
 
-bool apriloneil::LuaWrapper::evaluate(const apriloneil::PathToLuaCondition &condition,
-                                      const std::string &jsonstr_a,
-                                      const std::string &jsonstr_b) {
+bool apriloneil::LuaWrapper::evaluate(const apriloneil::PathToLuaCondition &condition) {
     sel::State lua(true);
+
+    lua["get_data_current"] = &DataAccess::get_data_current;
+
     lua.Load(condition);
-    int retval = lua["evaluate"](jsonstr_a, jsonstr_b);
+    int retval = lua["evaluate"]();
     return (1 == retval);
 }
 
-apriloneil::ParsedData apriloneil::LuaWrapper::parse(const apriloneil::PathToLuaParser &parser) {
+apriloneil::Data apriloneil::LuaWrapper::parse(const apriloneil::PathToLuaParser &parser) {
     sel::State lua(true);
 
     // TODO: Load the root_api correctly
@@ -23,13 +25,12 @@ apriloneil::ParsedData apriloneil::LuaWrapper::parse(const apriloneil::PathToLua
     lua.Load(parser);
     std::string jsonstr = lua["parse"]();
     std::string parse_error;
-    json11::Json parsed_json = json11::Json::parse(jsonstr, parse_error);
-    return parsed_json;
+    Data data = json11::Json::parse(jsonstr, parse_error);
+    return data;
 }
 
-void apriloneil::LuaWrapper::do_action(const apriloneil::PathToLuaAction &action,
-                                       const std::string &jsonstr) {
+void apriloneil::LuaWrapper::do_action(const apriloneil::PathToLuaAction &action) {
     sel::State lua(true);
     lua.Load(action);
-    lua["do_action"](jsonstr);
+    lua["do_action"]();
 }
