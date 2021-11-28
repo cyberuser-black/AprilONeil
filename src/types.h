@@ -20,6 +20,7 @@ namespace apriloneil{
     typedef PathToLuaCode PathToLuaParser;  // Path to a 'parser.lua' code with a 'parse()' function that returns a json str
     typedef PathToLuaCode PathToLuaCondition;  // Path to a '_condition.lua' code with an 'evaluate(a,b)' function that returns 1 (True), 0 (False)
     typedef PathToLuaCode PathToLuaAction;  // Path to an '_action.lua' code with a 'do_action(a,b)' function (void)
+    typedef PathToLuaCode PathToLuaRule;
 
     typedef std::string RuleName;
     typedef std::string ConfigurationName;

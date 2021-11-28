@@ -8,11 +8,11 @@
 #include <unordered_map>
 #include <vector>
 #include "wrappers/data_sources/parsers/ParserWrapper.h"
-#include "wrappers/rules/Rule.h"
+#include "wrappers/rules/RuleWrapper.h"
 
 namespace apriloneil {
     class Engine {
-        typedef std::vector<Rule*> Rules;
+        typedef std::vector<RuleWrapper*> Rules;
     public:
         Engine(const ConfigurationName& configuration_name);
 

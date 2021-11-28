@@ -6,20 +6,15 @@
 #include <unistd.h>
 #include "Engine.h"
 #include "wrappers/data_sources/parsers/ParserWrapper.h"
-#include "wrappers/conditions/ConditionWrapper.h"
-#include "wrappers/actions/ActionWrapper.h"
 #include "DataAccess.h"
+#include "wrappers/rules/RuleWrapper.h"
 
 namespace apriloneil {
     Engine::Engine(const ConfigurationName &configuration_name) {
         // TODO: Actually PARSE the data_sources, conditions and actions, for the _rules from configuration
-        PathToLuaCondition lua_condition = "../lua/conditions/memfree_toolow.lua";//"../lua/conditions/example_condition.lua";
-        PathToLuaAction lua_action = "../lua/actions/example_action.lua";
-        auto *condition = new ConditionWrapper(lua_condition);
-        auto *action = new ActionWrapper(lua_action);
-        auto *rule = new Rule(condition, action);
-        std::cout << "[C++] [Engine] Adding rule '" << condition->name() << "' --> '" << action->name() << "'..."
-                  << std::endl;
+        PathToLuaRule lua_rule = "../lua/rules/memfree_too_low.lua";//"../lua/rules/example_rule.lua";
+        auto *rule = new RuleWrapper(lua_rule);
+        std::cout << "[C++] [Engine] Adding rule '" << rule->name()  << "'..." << std::endl;
         _rules.push_back(rule);
     }
 
@@ -29,7 +24,7 @@ namespace apriloneil {
         while (true) {
             std::cout << "[C++] [Engine] Running _rules..." << std::endl;
             for (const auto rule: _rules) {
-                rule->run(data_access);
+                rule->invoke_rule();
             }
             std::cout << "[C++] [Engine] ------------------ delay between snapshots ---------------- " << std::endl;
             sleep(delay);

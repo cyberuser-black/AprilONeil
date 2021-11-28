@@ -5,15 +5,16 @@
 #include "LuaWrapper.h"
 #include "../../root_api/rootapi.h"
 #include "../DataAccess.h"
+#include "../../../AprilONeil/src/actions/Action.h"
 
-bool apriloneil::LuaWrapper::evaluate(const apriloneil::PathToLuaCondition &condition) {
+
+
+void apriloneil::LuaWrapper::invoke_rule(const apriloneil::PathToLuaRule &rule) {
     sel::State lua(true);
-
-    lua["get_data_current"] = &DataAccess::get_data_current;
-
-    lua.Load(condition);
-    int retval = lua["evaluate"]();
-    return (1 == retval);
+    lua.Load(rule);
+    lua["get_data_current"] = &DataAccess::get_data_current; //TODO: change to new cache get_data method/function
+    lua["action"] = &Action::invoke_action;
+    lua["invoke_rule"]();
 }
 
 apriloneil::Data apriloneil::LuaWrapper::parse(const apriloneil::PathToLuaParser &parser) {
@@ -27,10 +28,4 @@ apriloneil::Data apriloneil::LuaWrapper::parse(const apriloneil::PathToLuaParser
     std::string parse_error;
     Data data = json11::Json::parse(jsonstr, parse_error);
     return data;
-}
-
-void apriloneil::LuaWrapper::do_action(const apriloneil::PathToLuaAction &action) {
-    sel::State lua(true);
-    lua.Load(action);
-    lua["do_action"]();
 }

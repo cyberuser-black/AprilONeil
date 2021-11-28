@@ -14,10 +14,8 @@ namespace apriloneil {
     public:
         static Data parse(const PathToLuaParser &);
 
-        static bool evaluate(const PathToLuaCondition &condition);
+        static void invoke_rule(const apriloneil::PathToLuaRule &rule);
 
-        static void do_action(const apriloneil::PathToLuaAction &action);
-
-    };
+        };
 }
 #endif //APRILONEIL_LUAWRAPPER_H
