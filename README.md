@@ -4,6 +4,7 @@ Here is an overview of the suggested flow charts / sequence diagrams of the proj
 
 Here is the class diagram of the currently implemented 'Pull' architecture:
 ![April ONeil - Class Diagram](April%20ONeil%20-%20Class%20Diagram.jpg)
+https://miro.com/app/board/uXjVOe1kCwg=/?invite_link_id=828707922228
    
    ## Setup (Linux)
 1) Install Lua on your system - [follow this tutorial](https://www.tecmint.com/install0lua0in-centos-ubuntu-linux)
