@@ -12,7 +12,7 @@
 namespace apriloneil {
     Engine::Engine(const ConfigurationName &configuration_name) {
         // TODO: Actually PARSE the data_sources, conditions and actions, for the _rules from configuration
-        PathToLuaRule lua_rule = "../lua/rules/memfree_too_low.lua";//"../lua/rules/example_rule.lua";
+        PathToLuaRule lua_rule = "../lua/rules/too_many_threads_for_process.lua";//"../lua/rules/example_rule.lua";
         auto *rule = new RuleWrapper(lua_rule);
         std::cout << "[C++] [Engine] Adding rule '" << rule->name()  << "'..." << std::endl;
         _rules.push_back(rule);

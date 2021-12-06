@@ -62,10 +62,43 @@ function cyberlib.keyval_lines_to_json(keyval_lines)
     return json
 end
 
+function cyberlib.multiple_values_lines_to_json(lines)
+    --[[
+    INPUT FORMAT (Multiple Values Lines):
+        55b980783000-55b980784000 rw-p 0000a000 103:01 6144152                   /usr/bin/cat
+        55b9825a5000-55b9825c6000 rw-p 00000000 00:00 0                          [heap]
+        7fdf30962000-7fdf30984000 rw-p 00000000 00:00 0
+        ...
+    OUTPUT FORMAT (JSON):
+       { "MemTotal" : "4001688", "MemFree" : "265628", "MemAvailable" : "1078484", ...}
+    ]]
+
+    local json = {}
+    local i = 1
+    for line in lines:gmatch("[^\r\n]*") do
+        -- line = '55b980783000-55b980784000 rw-p 0000a000 103:01 6144152                   /usr/bin/cat'
+        local parsed_line = cyberlib.split(line)
+
+        if parsed_line == nil then goto continue end
+        json[i] = parsed_line
+        i = i + 1
+        ::continue::
+    end
+    return json
+end
+
 function cyberlib.parse_meminfo_style(parser_name, pid)
     local parser_path = cyberlib.get_proc_path(parser_name, pid)
     local parser_dump = rootapi_readfile(parser_path)
     local json = cyberlib.keyval_lines_to_json(parser_dump)
+    jsonstr = lunajson.encode(json)
+    return jsonstr
+end
+
+function cyberlib.parse_lines_to_lists(parser_name, pid)
+    local parser_path = cyberlib.get_proc_path(parser_name, pid)
+    local parser_dump = rootapi_readfile(parser_path)
+    local json = cyberlib.multiple_values_lines_to_json(parser_dump)
     jsonstr = lunajson.encode(json)
     return jsonstr
 end
