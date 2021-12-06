@@ -7,7 +7,6 @@
 
 #include "ParserWrapper.h"
 
-#include "../../../../include/Selene/include/selene.h"
 #include "../../LuaWrapper.h"
 
 namespace apriloneil {

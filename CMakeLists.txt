@@ -27,5 +27,5 @@ add_executable(AprilONeil src/main.cpp
                 src/DataAccess.cpp
                 src/DataAccess.h
                 src/DataEntry.cpp
-                src/DataEntry.h)
+                src/DataEntry.h src/utils.cpp)
 target_link_libraries(AprilONeil ${LUA_LIBRARY} ${CMAKE_DL_LIBS})

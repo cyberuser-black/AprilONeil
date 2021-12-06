@@ -16,7 +16,7 @@ namespace apriloneil {
             std::ifstream t(path);
             std::stringstream buffer;
             buffer << t.rdbuf();
-            std::cout << "[C++] [RootAPI] [readfile] \"" << buffer.str() << "\"" << std::endl;
+//            std::cout << "[C++] [RootAPI] [readfile] \"" << buffer.str() << "\"" << std::endl;
             return buffer.str();
         }
     };

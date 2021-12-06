@@ -24,7 +24,7 @@ apriloneil::Data apriloneil::LuaWrapper::parse(const apriloneil::PathToLuaParser
     lua["rootapi_readfile"] = &RootAPI::readfile;
 
     lua.Load(parser);
-    std::string jsonstr = lua["parse"]();
+    JSONStr jsonstr = lua["parse"]();
     std::string parse_error;
     Data data = json11::Json::parse(jsonstr, parse_error);
     return data;
