@@ -2,12 +2,14 @@
 // Created by silver on 23/11/2021.
 //
 
-#include "Action.h"
+#include "action.h"
 #include "iostream"
+#include "../tracing/trace_entry.h"
 #include <utility>
 
 void Action::log(const std::string &str) {
-    std::cout << "[C++] [Log Action] Log Input: " << str << std::endl;
+    TRACE_ENTER();
+    TRACE_MESSAGE("Log Input: " + str);
 }
 
 void Action::invoke_action(int actionNum, const std::string &input) {

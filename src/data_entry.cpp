@@ -3,24 +3,26 @@
 //
 
 #include <iostream>
-#include "DataEntry.h"
+#include "data_entry.h"
+#include "tracing/trace_entry.h"
 
 const apriloneil::DataHistory &apriloneil::DataEntry::get_data() {
-    std::cout << "[C++] [DataEntry] Getting data... " << std::endl;
+    TRACE_ENTER();
+    TRACE_MESSAGE("Getting data... ");
     clock_t now = clock();
     // DataEntries entry expired? Access Data
-    std::cout << "[C++] [DataEntry] now = " << now << ", _last_updated = " << _last_updated << ", ttl = " << _ttl_milisec << std::endl;
+    //TRACE_MESSAGE("now = " + now + ", _last_updated = " + _last_updated + ", ttl = " + _ttl_milisec);
     if (_ttl_milisec < (now - _last_updated)) {
-        std::cout << "[C++] [DataEntry] DataEntry is old, calling the data source... " << std::endl;
+        TRACE_MESSAGE("DataEntry is old, calling the data source... ");
         auto *new_data = new Data();
         _data_source->get_data(new_data);
-        std::cout << "[C++] [DataEntry] New data = '" << new_data->dump() << "'" << std::endl;
+        TRACE_MESSAGE("New data = '" + new_data->dump() + "'");
         delete _cached_data->second;
         _cached_data->second = _cached_data->first;
         _cached_data->first = new_data;
         _last_updated = now;
     } else {
-        std::cout << "[C++] [DataEntry] DataEntry still fresh, returning from cache... " << std::endl;
+        TRACE_MESSAGE("DataEntry still fresh, returning from cache... ");
     }
     return *_cached_data;
 }

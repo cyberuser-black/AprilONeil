@@ -5,9 +5,9 @@
 #include <iostream>
 #include <lua.hpp>
 
-#include "ParserWrapper.h"
+#include "parser_wrapper.h"
 
-#include "../../LuaWrapper.h"
+#include "../../lua_wrapper.h"
 
 namespace apriloneil {
     void ParserWrapper::get_data(Data* out_data) const {

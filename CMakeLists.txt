@@ -9,23 +9,23 @@ set(CMAKE_CXX_STANDARD 11)
 #include "../../../AprilONeil/src/actions/Action.h"
 
 add_executable(AprilONeil src/main.cpp
-                src/actions/Action.h
-                src/actions/Action.cpp
-                src/wrappers/rules/RuleWrapper.cpp
-                src/wrappers/rules/RuleWrapper.h
-                src/Engine.cpp
-                src/Engine.h
+        src/actions/action.h
+        src/actions/action.cpp
+        src/wrappers/rules/rule_wrapper.cpp
+        src/wrappers/rules/rule_wrapper.h
+        src/engine.cpp
+        src/engine.h
                 src/types.h
-                src/wrappers/data_sources/parsers/ParserWrapper.cpp
-                src/wrappers/data_sources/parsers/ParserWrapper.h
+        src/wrappers/data_sources/parsers/parser_wrapper.cpp
+        src/wrappers/data_sources/parsers/parser_wrapper.h
                 include/json11/json11.cpp
                 include/json11/json11.hpp
-                src/wrappers/LuaWrapper.cpp
-                src/wrappers/LuaWrapper.h
+        src/wrappers/lua_wrapper.cpp
+        src/wrappers/lua_wrapper.h
                 root_api/rootapi.h
-                src/wrappers/data_sources/DataSourceInterface.h
-                src/DataAccess.cpp
-                src/DataAccess.h
-                src/DataEntry.cpp
-                src/DataEntry.h src/utils.cpp)
+        src/wrappers/data_sources/data_source_interface.h
+        src/data_access.cpp
+        src/data_access.h
+        src/data_entry.cpp
+        src/data_entry.h src/utils.cpp src/tracing/trace_entry.cpp src/tracing/trace_entry.h src/tracing/trace_log.h src/tracing/demo.cpp src/tracing/colormod.h)
 target_link_libraries(AprilONeil ${LUA_LIBRARY} ${CMAKE_DL_LIBS})

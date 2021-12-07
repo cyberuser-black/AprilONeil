@@ -1,9 +1,9 @@
 ## Overview
 Here is an overview of the suggested flow charts / sequence diagrams of the project:
-![April ONeil - Flow Chart Alternatives](April%20ONeil%20-%20Flow%20Chart%20Alternatives.jpg)
+![April ONeil - Flow Chart Alternatives](docs/img/April%20ONeil%20-%20Flow%20Chart%20Alternatives.jpg)
 
 Here is the class diagram of the currently implemented 'Pull' architecture:
-![April ONeil - Class Diagram](April%20ONeil%20-%20Class%20Diagram.jpg)
+![April ONeil - Class Diagram](docs/img/April%20ONeil%20-%20Class%20Diagram.jpg)
 https://miro.com/app/board/uXjVOe1kCwg=/?invite_link_id=828707922228
    
    ## Setup (Linux)

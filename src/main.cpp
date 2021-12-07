@@ -1,9 +1,13 @@
 #include <iostream>
 
-#include "Engine.h"
+#include "engine.h"
+#include "tracing/trace_entry.h"
 
 int main() {
+    TRACE_ENTER();
     apriloneil::Engine engine("default.txt");
     engine.run_forever();
     return 0;
 }
+
+

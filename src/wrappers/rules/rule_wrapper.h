@@ -2,11 +2,11 @@
 // Created by cyber on 11/3/21.
 //
 
-#ifndef APRILONEIL_RULEWRAPPER_H
-#define APRILONEIL_RULEWRAPPER_H
+#ifndef APRILONEIL_RULE_WRAPPER_H
+#define APRILONEIL_RULE_WRAPPER_H
 
 #include "../../types.h"
-#include "../LuaWrapper.h"
+#include "../lua_wrapper.h"
 
 
 namespace apriloneil {
@@ -31,4 +31,4 @@ namespace apriloneil {
 }
 
 
-#endif //APRILONEIL_RULEWRAPPER_H
+#endif //APRILONEIL_RULE_WRAPPER_H

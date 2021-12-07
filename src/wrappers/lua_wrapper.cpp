@@ -2,10 +2,10 @@
 // Created by cyber on 11/8/21.
 //
 
-#include "LuaWrapper.h"
+#include "lua_wrapper.h"
 #include "../../root_api/rootapi.h"
-#include "../DataAccess.h"
-#include "../../../AprilONeil/src/actions/Action.h"
+#include "../data_access.h"
+#include "../../../AprilONeil/src/actions/action.h"
 
 
 

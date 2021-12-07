@@ -2,16 +2,16 @@
 // Created by cyber on 11/23/21.
 //
 
-#ifndef APRILONEIL_DATAACCESS_H
-#define APRILONEIL_DATAACCESS_H
+#ifndef APRILONEIL_DATA_ACCESS_H
+#define APRILONEIL_DATA_ACCESS_H
 
 
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include "types.h"
-#include "wrappers/data_sources/DataSourceInterface.h"
-#include "DataEntry.h"
+#include "wrappers/data_sources/data_source_interface.h"
+#include "data_entry.h"
 
 namespace apriloneil {
     class DataAccess {
@@ -39,4 +39,4 @@ namespace apriloneil {
         static DataEntries *_data_entries;
     };
 }
-#endif //APRILONEIL_DATAACCESS_H
+#endif //APRILONEIL_DATA_ACCESS_H

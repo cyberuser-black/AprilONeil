@@ -4,10 +4,10 @@
 
 #include <iostream>
 #include <unistd.h>
-#include "Engine.h"
-#include "wrappers/data_sources/parsers/ParserWrapper.h"
-#include "DataAccess.h"
-#include "wrappers/rules/RuleWrapper.h"
+#include "engine.h"
+#include "wrappers/data_sources/parsers/parser_wrapper.h"
+#include "data_access.h"
+#include "wrappers/rules/rule_wrapper.h"
 #include "utils.h"
 
 namespace apriloneil {

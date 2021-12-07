@@ -2,11 +2,11 @@
 // Created by cyber on 11/23/21.
 //
 
-#ifndef APRILONEIL_DATAENTRY_H
-#define APRILONEIL_DATAENTRY_H
+#ifndef APRILONEIL_DATA_ENTRY_H
+#define APRILONEIL_DATA_ENTRY_H
 
 #include "types.h"
-#include "wrappers/data_sources/DataSourceInterface.h"
+#include "wrappers/data_sources/data_source_interface.h"
 
 namespace apriloneil {
     class DataEntry {
@@ -28,4 +28,4 @@ namespace apriloneil {
 }
 
 
-#endif //APRILONEIL_DATAENTRY_H
+#endif //APRILONEIL_DATA_ENTRY_H

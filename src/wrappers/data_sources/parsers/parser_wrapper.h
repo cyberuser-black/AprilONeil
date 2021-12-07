@@ -2,11 +2,11 @@
 // Created by cyber on 11/3/21.
 //
 
-#ifndef APRILONEIL_PARSERWRAPPER_H
-#define APRILONEIL_PARSERWRAPPER_H
+#ifndef APRILONEIL_PARSER_WRAPPER_H
+#define APRILONEIL_PARSER_WRAPPER_H
 
 #include <utility>
-#include "../DataSourceInterface.h"
+#include "../data_source_interface.h"
 #include "../../../types.h"
 
 namespace apriloneil {
@@ -29,4 +29,4 @@ namespace apriloneil {
 }
 
 
-#endif //APRILONEIL_PARSERWRAPPER_H
+#endif //APRILONEIL_PARSER_WRAPPER_H
