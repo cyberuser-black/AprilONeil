@@ -25,7 +25,7 @@ function run()
         return
     end
     for i, pid in pairs(pids) do
-        parsed_data = cyberlib.temp.get_data('/proc/pid/status', 'open')
+        parsed_data = cyberlib.temp.get_data('/proc/pid/status', 'open', pid)
         parsed_data = parsed_data['Uid']
         for j, uid in pairs(parsed_data) do
             if uid == '0' then

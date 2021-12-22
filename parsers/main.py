@@ -24,8 +24,8 @@ def run_lua_rule(rule_name: str):
 
 
 if __name__ == '__main__':
-    proc = "/proc/pid/ns"
-    run_lua_parser(proc, io_operation='list_dir', pid='1743')
+    # proc = "/proc/pid/ns"
+    # run_lua_parser(proc, io_operation='list_dir', pid='1743')
 
-    # rule_name = 'bash_root_instances'
-    # run_lua_rule(rule_name)
+    rule_name = 'exe_instances_threads_uid_gid_rss_rule'
+    run_lua_rule(rule_name)
