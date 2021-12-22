@@ -1,14 +1,14 @@
 package.path = package.path .. ";./lua/?.lua"
 
 local cyberlib = require ('cyberlib') -- from {PROJECT_DIR}/lua/cyberlib.lua
-local status_parser = require( './lua/data_sources/parsers/proc/pid/status')
+-- local status_parser = require( './lua/data_sources/parsers/proc/pid/status')
 
 print("[Lua] [bash_root_instances] running...")
-function pre_run()
-    print("[Lua] [bash_root_instances] pre-running...")
-    --check {'/proc/pid/status'}
-    return true
-end
+-- function pre_run()
+--     print("[Lua] [bash_root_instances] pre-running...")
+--     --check {'/proc/pid/status'}
+--     return true
+-- end
 
 -- exe = '/usr/bin/bash' -- for linux
 exe = '/bin/dash' -- for windows with wsl
@@ -17,7 +17,7 @@ max_of_allowed_rooted_terminals = 2
 
 function run()
     print('[Lua] [bash_root_instances] calling cyberlib.get_exe_pids()')
-    local exe_pids = cyberlib.get_exe_pids()
+    local exe_pids = cyberlib.rules_helpers.get_exe_pids()
     local pids = exe_pids[exe]
     local num_of_rooted_terminals = 0
     if pids == nil then
@@ -25,7 +25,7 @@ function run()
         return
     end
     for i, pid in pairs(pids) do
-        parsed_data = parse(pid)
+        parsed_data = cyberlib.temp.get_data('/proc/pid/status', 'open')
         parsed_data = parsed_data['Uid']
         for j, uid in pairs(parsed_data) do
             if uid == '0' then

@@ -29,9 +29,10 @@ print("[Lua] [/proc/mounts] running...")
 package.path = package.path .. ";./lua/?.lua"
 local cyberlib = require ('cyberlib') -- from {PROJECT_DIR}/lua/cyberlib.lua
 
-function parse(pid)
-    if (pid == null) then pid = '' end
-    print("[Lua] [/proc/mounts] parse("..pid..")...")
-    local parsed_data = cyberlib.parse_meminfo_style("mounts", pid)
+name = "mounts"
+
+function parse(data)
+    print("[Lua] [/proc/mounts] parse() " .. name .. "...")
+    local parsed_data = cyberlib.parsers_helpers.parse_key_val_style(data)
     return parsed_data
 end

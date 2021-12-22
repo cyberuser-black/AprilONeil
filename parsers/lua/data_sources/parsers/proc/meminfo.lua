@@ -145,9 +145,10 @@ print("[Lua] [/proc/meminfo] running...")
 package.path = package.path .. ";./lua/?.lua"
 local cyberlib = require ('cyberlib') -- from {PROJECT_DIR}/lua/cyberlib.lua
 
-function parse(pid)
-    if (pid == null) then pid = '' end
-    print("[Lua] [/proc/meminfo] parse("..pid..")...")
-    local parsed_data = cyberlib.parse_meminfo_style("meminfo", pid)
+name = 'meminfo'
+
+function parse(data)
+    print("[Lua] [/proc/meminfo] parse(data) " .. name .. "...")
+    local parsed_data = cyberlib.parsers_helpers.parse_key_val_style(data)
     return parsed_data
 end

@@ -255,8 +255,8 @@ local cyberlib = require ('cyberlib') -- from {PROJECT_DIR}/lua/cyberlib.lua
 
 name = "status"
 
-function parse(pid)
-    print("[Lua] [/proc/" .. pid .. "/status] parse("..name..")...")
-    local parsed_data = cyberlib.parse_lines_to_keys_and_lists(name, pid)
+function parse(data)
+    print("[Lua] [/proc/<pid>/status] parse(data) "..name.."...")
+    local parsed_data = cyberlib.parsers_helpers.parse_lines_to_keys_and_lists(data)
     return parsed_data
 end

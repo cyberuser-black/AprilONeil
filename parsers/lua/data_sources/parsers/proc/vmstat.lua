@@ -7,9 +7,8 @@ local cyberlib = require ('cyberlib') -- from {PROJECT_DIR}/lua/cyberlib.lua
 
 name = "vmstat"
 
-function parse(pid)
-    print("[Lua] [/proc/vmstat] parse("..name..")...")
-    local parsed_data = cyberlib.parse_meminfo_style(name, pid)
---     print("[Lua] [vmstat] parsed "..parsed_data)
+function parse(data)
+    print("[Lua] [/proc/vmstat] parse() " .. name .. "...")
+    local parsed_data = cyberlib.parse_key_val_style(data)
     return parsed_data
 end

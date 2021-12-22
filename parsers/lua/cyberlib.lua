@@ -1,9 +1,36 @@
 print("[Lua] [cyberlib] running...")
--- local lunajson = require ('lunajson') -- from /usr/local/share/lua/5.3/lunajson.lua
-local cyberlib = {}
-local pp = require('../pp/pp')
+package.path = package.path .. ";./lua/?.lua"
+package.path = package.path .. ";./lua/data_sources/?.lua"
+package.path = package.path .. ";./lua/data_sources/parsers/?.lua"
+package.path = package.path .. ";./lua/data_sources/parsers/proc/?.lua"
+package.path = package.path .. ";./lua/data_sources/parsers/proc/pid/?.lua"
 
-function rootapi_readfile(path)
+local pp = require('../pp/pp')
+local parsers_helpers = {}
+local root_api = {}
+local temp = {}
+local utils = {}
+local rules_helpers = {}
+
+cyberlib = {}
+cyberlib.parsers_helpers = parsers_helpers
+cyberlib.rules_helpers = rules_helpers
+cyberlib.utils = utils
+cyberlib.temp = temp
+-------------------------------------------------------------------------------
+
+-- root api class
+
+function root_api.readlink(parser_name, pid)
+    -- mimics a root_api protocol to readlink.
+    local path = utils.get_proc_path(parser_name, pid)
+    local popen = io.popen
+    local pfile = popen('readlink "'..path..'" 2>/dev/null')
+    return pfile:read()
+end
+
+function root_api.readfile(path)
+    -- mimics a root_api protocol to read (open) a file.
     local file = io.open(path, "rb") -- r read mode and b binary mode
     if not file then
         return nil
@@ -13,9 +40,10 @@ function rootapi_readfile(path)
     return content
 end
 
-function rootapi_list_dir(path)
+function root_api.list_dir(path)
+    -- mimics a root_api protocol to list a dir
     local i, t, popen = 0, {}, io.popen
-    local pfile = popen('ls -a "'..path..'"')
+    local pfile = popen('ls -la "'..path..'"')
     for filename in pfile:lines() do
         if(filename ~= '..' and filename ~= '.') then
             i = i + 1
@@ -26,28 +54,48 @@ function rootapi_list_dir(path)
     return t
 end
 
-function rootapi_list_dir_detailed(path)
-    local i, t, popen = 0, {}, io.popen
-    local pfile = popen('ls -la "'..path..'" 2>/dev/null')
-    for filename in pfile:lines() do
-        if(filename ~= '..' and filename ~= '.') then
-            i = i + 1
-            t[i] = filename
-        end
+----------------------------------------------------------------------------
+
+-- temp class
+
+-- parser_path = '/proc/pid/parser' or '/proc/parser'
+function temp.get_data(parser_path, root_api_operation, pid)
+    -- use this function in rules to call get_data. later will be replaced by
+    -- the real function.
+    if pid == nil then
+        pid = ''
     end
-    pfile:close()
-    return t
+    require_value = require(parser_path)
+    if (root_api_operation == 'open') then
+        return parse(root_api.readfile(parser_path:gsub('pid', pid)))
+    elseif (root_api_operation == 'list_dir') then
+        return parse(root_api.list_dir(parser_path:gsub('pid', pid)))
+    elseif (root_api_operation == 'read_link') then
+        return parse(root_api.readlink(parser_path:gsub('pid', pid)))
+    end
+    return nil
 end
 
-function cyberlib.print()
+----------------------------------------------------------------------------
+
+-- utils class
+
+function utils.get_proc_path(parser_name, pid)
+    -- gets the proc_path of the given parser name and pid (if given)
+    if pid == 'null' or pid == nil then
+        pid = ''
+    else
+        pid = pid .. '/'
+    end
+    return "/proc/" .. pid .. parser_name
+end
+
+function utils.print()
     print("[Lua] [cyberlib.print] Cyber!")
 end
 
-function cyberlib.add(a, b)
-    return (a + b)
-end
-
-function cyberlib.split(inputstr, sep)
+function utils.split(inputstr, sep)
+    -- splits the inputstr by the sep.
     if sep == nil then
         sep = "%s"
     end
@@ -60,31 +108,61 @@ function cyberlib.split(inputstr, sep)
     return t
 end
 
-function cyberlib.get_proc_path(parser_name, pid)
-    if pid == 'null' or pid == nil then
-        pid = ''
+function utils.table_to_str(o)
+    if type(o) == 'table' then
+        local s = '{ '
+        for k, v in pairs(o) do
+            if type(k) ~= 'number' then
+                k = '"' .. k .. '"'
+            end
+            s = s .. '[' .. k .. '] = ' .. table_to_str(v) .. ','
+        end
+        return s .. '}'
     else
-        pid = pid .. '/'
+        return tostring(o)
     end
-    return "/proc/" .. pid .. parser_name
 end
 
-function cyberlib.keyval_lines_to_json(keyval_lines)
-    --[[
+function utils.dump(o)
+    pp.print(o, '\t')
+end
+
+-- Lua implementation of PHP scandir function
+function utils.scandir(directory)
+    --print('scandir...')
+    local i, t, popen = 0, {}, io.popen
+    --print('ls -a "'..directory..'"')
+    local pfile = popen('ls -a "' .. directory .. '"')
+    --print(pfile:lines())
+    for filename in pfile:lines() do
+        --print(filename)
+        i = i + 1
+        t[i] = filename
+    end
+    pfile:close()
+    return t
+end
+
+------------------------------------------------------------------------------
+
+-- parsers helpers class
+
+function parsers_helpers.parse_key_val_style(data)
+        --[[
     INPUT FORMAT (Key-Value Lines):
        MemTotal:        4001688 kB
        MemFree:          265628 kB
        MemAvailable:    1078484 kB
        ...
-    OUTPUT FORMAT (JSON):
+    OUTPUT FORMAT:
        { "MemTotal" : "4001688", "MemFree" : "265628", "MemAvailable" : "1078484", ...}
     ]]
 
-    local json = {}
-    for line in keyval_lines:gmatch("[^\r\n]*") do
+    local parsed_data = {}
+    for line in data:gmatch("[^\r\n]*") do
         -- line = 'MemTotal:        4001688 kB'
         line = line:gsub(':', '') -- remove the ':' char
-        local parsed_line = cyberlib.split(line)
+        local parsed_line = utils.split(line)
 
         -- key = 'MemTotal', memory = '4001688', size = 'kB'
         local key = parsed_line[1]
@@ -101,42 +179,17 @@ function cyberlib.keyval_lines_to_json(keyval_lines)
         if size == nil then
             size = ""
         end
-        json[key] = memory -- .. " " .. size
+        parsed_data[key] = memory -- .. " " .. size
 
         :: continue ::
     end
-    return json
+    return parsed_data
 end
 
-function cyberlib.multiple_values_lines_to_json(lines)
-    --[[
-    INPUT FORMAT (Multiple Values Lines):
-        55b980783000-55b980784000 rw-p 0000a000 103:01 6144152                   /usr/bin/cat
-        55b9825a5000-55b9825c6000 rw-p 00000000 00:00 0                          [heap]
-        7fdf30962000-7fdf30984000 rw-p 00000000 00:00 0
-        ...
-    OUTPUT FORMAT (JSON):
-       { 1: '55b980783000-55b980784000, 2: rw-p, 3: 0000a00, 4: 103:01, 5: 6144152, 6: /usr/bin/cat'}
-    ]]
-
-    local json = {}
-    local i = 1
-    for line in lines:gmatch("[^\r\n]*") do
-        local parsed_line = cyberlib.split(line)
-
-        if parsed_line == nil then
-            goto continue
-        end
-        json[i] = parsed_line
-        i = i + 1
-        :: continue ::
-    end
-    return json
-
-end
-
-function cyberlib.multiple_values_lines_to_keys_and_lists(lines)
-    --[[
+function parsers_helpers.parse_lines_to_keys_and_lists(data)
+    -- input - data
+    -- output - parses each line to key and the rest of the line as a value of the key as list.
+        --[[
     INPUT FORMAT (Multiple Values Lines):
         Name:	bash
         Umask:	0002
@@ -148,15 +201,13 @@ function cyberlib.multiple_values_lines_to_keys_and_lists(lines)
         TracerPid:	0
         Uid:	1000	1000	1000	1000
         ...
-    OUTPUT FORMAT (JSON):
+    OUTPUT FORMAT:
        { Name: {1: bash}, Umask..., Uid: {1: 1000, 2: 1000, 3: 1000, : 1000}, ...}
     ]]
 
-    local json = {}
-    for line in lines:gmatch("[^\r\n]*") do
-        -- line = '55b980783000-55b980784000 rw-p 0000a000 103:01 6144152                   /usr/bin/cat'
-
-        local parsed_line = cyberlib.split(line)
+    local parsed_data = {}
+    for line in data:gmatch("[^\r\n]*") do
+        local parsed_line = utils.split(line)
         if parsed_line == nil then
             goto continue
         end
@@ -169,42 +220,49 @@ function cyberlib.multiple_values_lines_to_keys_and_lists(lines)
         for i = 2, #parsed_line do
             new_parsed_line[i -1] = parsed_line[i]
         end
-        json[new_key] = new_parsed_line
+        parsed_data[new_key] = new_parsed_line
         :: continue ::
     end
-    return json
+    return parsed_data
 end
 
-function cyberlib.parse_meminfo_style(parser_name, pid)
-    local parser_path = cyberlib.get_proc_path(parser_name, pid)
-    local parser_dump = rootapi_readfile(parser_path)
-    local json = cyberlib.keyval_lines_to_json(parser_dump)
-    return json
+function parsers_helpers.parse_lines_to_lists_of_lists(data)
+    -- input - data
+    -- output - each line as a list (seperated by white spaces)
+        --[[
+    INPUT FORMAT (Multiple Values Lines):
+        55b980783000-55b980784000 rw-p 0000a000 103:01 6144152                   /usr/bin/cat
+        55b9825a5000-55b9825c6000 rw-p 00000000 00:00 0                          [heap]
+        7fdf30962000-7fdf30984000 rw-p 00000000 00:00 0
+        ...
+    OUTPUT FORMAT (each line parsed to):
+       { 1: '55b980783000-55b980784000, 2: rw-p, 3: 0000a00, 4: 103:01, 5: 6144152, 6: /usr/bin/cat'}
+    ]]
+
+    local parsed_data = {}
+    local i = 1
+    for line in data:gmatch("[^\r\n]*") do
+        local parsed_line = utils.split(line)
+
+        if parsed_line == nil then
+            goto continue
+        end
+        parsed_data[i] = parsed_line
+        i = i + 1
+        :: continue ::
+    end
+    return parsed_data
 end
 
-function cyberlib.parse_lines_to_keys_and_lists(parser_name, pid)
-    local parser_path = cyberlib.get_proc_path(parser_name, pid)
-    local parser_dump = rootapi_readfile(parser_path)
-    local json = cyberlib.multiple_values_lines_to_keys_and_lists(parser_dump)
-    return json
-end
-
-function cyberlib.parse_lines_to_lists(parser_name, pid)
-    local parser_path = cyberlib.get_proc_path(parser_name, pid)
-    local parser_dump = rootapi_readfile(parser_path)
-    local json = cyberlib.multiple_values_lines_to_json(parser_dump)
-    return json
-end
-
-function cyberlib.parse_list_dir_to_links(parser_name, pid)
-    local parser_path = cyberlib.get_proc_path(parser_name, pid)
-    local list_dir = rootapi_list_dir_detailed(parser_path)
+function parsers_helpers.parse_list_dir_to_links(data)
+    -- input - data of 'ls -la'
+    -- output - parses an output data of the command 'ls -la' to keys and
+    -- values of the links in this list
+    local list_dir = data
     local parsed_links = {}
     for k, v in pairs(list_dir) do
-        split_v = cyberlib.split(v, '>')
-        split_new_k = cyberlib.split(split_v[1], ' ')
---         print(split_v[1])
---         print(v)
+        split_v = utils.split(v, '>')
+        split_new_k = utils.split(split_v[1], ' ')
         if split_new_k[9] ~= nil then
             parsed_links[split_new_k[9]] = split_v[2]
         end
@@ -212,39 +270,35 @@ function cyberlib.parse_list_dir_to_links(parser_name, pid)
     return parsed_links
 end
 
-function cyberlib.root_api_readlink(parser_name, pid)
-    local path = cyberlib.get_proc_path(parser_name, pid)
-    local popen = io.popen
-    local pfile = popen('readlink "'..path..'" 2>/dev/null')
-    return pfile:read()
-end
-
--- Lua implementation of PHP scandir function
-function scandir(directory)
-    --print('scandir...')
-    local i, t, popen = 0, {}, io.popen
-    --print('ls -a "'..directory..'"')
-    local pfile = popen('ls -a "' .. directory .. '"')
-    --print(pfile:lines())
-    for filename in pfile:lines() do
-        --print(filename)
-        i = i + 1
-        t[i] = filename
+function parsers_helpers.parse_list_dir_to_regular_list(data)
+    -- input - data of 'ls -la'
+    -- output - parses an output data of the command 'ls -la' to keys only (drop links)
+    local parsed_links = {}
+    for k, v in pairs(list_dir) do
+        split_v = utils.split(v, '>')
+        split_new_k = utils.split(split_v[1], ' ')
+        if (split_new_k[9] ~= nil and split_new_k[9] ~= '.' and split_new_k[9] ~= '..') then
+            parsed_links[k] = split_new_k[9]
+        end
     end
-    pfile:close()
-    return t
+    return parsed_links
 end
 
-function cyberlib.get_exe_pids()
+----------------------------------------------------------------------------
+
+-- rules helpers class
+
+function rules_helpers.get_exe_pids()
+    -- returns a table of exe's, and for each exe a list of it's pid's.
     print('get_exe_pids...')
     local exe_pids = {}
-    local proc = scandir('/proc')
+    local proc = utils.scandir('/proc')
     for i, filename in pairs(proc) do
         pid = tonumber(filename)
         if (pid ~= nil) then
-            local ls_exe = cyberlib.root_api_readlink('exe', pid)
+            local ls_exe = root_api.readlink('exe', pid)
             if ls_exe ~= nil then
-                local ls_exe_split = cyberlib.split(ls_exe, " ");
+                local ls_exe_split = utils.split(ls_exe, " ");
                 local exe = ls_exe_split[#ls_exe_split]
                 if exe_pids[exe] == nil then
                     exe_pids[exe] = { pid }
@@ -254,27 +308,7 @@ function cyberlib.get_exe_pids()
             end
         end
     end
---     dump(exe_pids)
     return exe_pids
-end
-
-function table_to_str(o)
-    if type(o) == 'table' then
-        local s = '{ '
-        for k, v in pairs(o) do
-            if type(k) ~= 'number' then
-                k = '"' .. k .. '"'
-            end
-            s = s .. '[' .. k .. '] = ' .. table_to_str(v) .. ','
-        end
-        return s .. '}'
-    else
-        return tostring(o)
-    end
-end
-
-function dump(o)
-    pp.print(o, '\t')
 end
 
 return cyberlib

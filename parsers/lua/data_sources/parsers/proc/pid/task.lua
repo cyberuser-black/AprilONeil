@@ -19,16 +19,15 @@ local cyberlib = require ('cyberlib') -- from {PROJECT_DIR}/lua/cyberlib.lua
 
 name = "task"
 
-function parse(pid)
+function parse(data)
     parsed_data = {}
-    print("[Lua] [/proc/" .. pid .. "/task] parse("..name..")...")
-    dir_list = rootapi_list_dir("/proc/" .. pid .. "/task")
---     for k, v in pairs(dir_list) do
---         print(k, v)
---         parsed_data[v] = cyberlib.parse_meminfo_style(name .. "/task", pid)
---     end
---     return parsed_data
+    print("[Lua] [/proc/<pid>/task] parse() "..name.."...")
+    parsed_data = cyberlib.parsers_helpers.parse_list_dir_to_regular_list(data)
 
--- TODO: check whether to parse each thread in pid/task to smaller parts.parsed_data
-    return dir_list
+    -- TODO: check whether to parse each thread in pid/task to smaller parts.parsed_data
+
+    for k, v in pairs(parsed_data) do
+        print(k, v)
+    end
+    return parsed_data
 end

@@ -95,8 +95,11 @@ local cyberlib = require ('cyberlib') -- from {PROJECT_DIR}/lua/cyberlib.lua
 
 name = "fd"
 
-function parse(pid)
-    print("[Lua] [/proc/" .. pid .. "/fd] parse("..name..")...")
-    parsed_data = cyberlib.parse_list_dir_to_links(name, pid)
+function parse(data)
+    print("[Lua] [/proc/<pid>/fd] parse(data) "..name.."...")
+    parsed_data = cyberlib.parsers_helpers.parse_list_dir_to_links(data)
+--     for k, v in pairs(parsed_data) do
+--         print(k, v)
+--     end
     return parsed_data
 end

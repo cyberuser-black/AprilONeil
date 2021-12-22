@@ -61,12 +61,13 @@ stat_key_table = {
 
 name = "stat"
 
-function parse(pid)
+function parse(data)
     parsed_data_with_keys = {}
-    print("[Lua] [/proc/" .. pid .. "/stat] parse("..name..")...")
-    local parsed_data = cyberlib.parse_lines_to_lists(name, pid)
+    print("[Lua] [/proc/<pid>/stat] parse() "..name.."...")
+    local parsed_data = cyberlib.parsers_helpers.parse_lines_to_lists_of_lists(data)
     for k, v in pairs(parsed_data[1]) do
         parsed_data_with_keys[stat_key_table[k]] = v
+--         print(stat_key_table[k], v)
     end
     return parsed_data_with_keys
 end
