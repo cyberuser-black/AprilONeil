@@ -8,12 +8,14 @@
 #include "parser_wrapper.h"
 
 #include "../../lua_wrapper.h"
+#include "../../../tracing/trace_entry.h"
 
 namespace apriloneil {
     void ParserWrapper::get_data(Data* out_data) const {
-        std::cout << "[C++] [ParserWrapper] Invoking '" << _lua_parser_path << "'..." << std::endl;
+        TRACE_ENTER();
+        TRACE_MESSAGE("Invoking '" + _lua_parser_path + "'...");
         invoke_lua_wrapper(out_data);
-        std::cout << "[C++] [ParserWrapper] Parsed Data = " << out_data->dump() << "" << std::endl;
+        TRACE_MESSAGE("Parsed Data = " + out_data->dump());
     }
 
     void ParserWrapper::invoke_lua_wrapper(Data *out_parsed_data) const {

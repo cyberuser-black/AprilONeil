@@ -6,18 +6,29 @@
 #include <iomanip>
 #include "trace_entry.h"
 
-apriloneil::TraceEntry::TraceEntry(color::Code color_code, const std::string &file_name,
-                                   const std::string &function_name) : log_(TraceLog::get_instance()),
-                                                                       file_name_(file_name),
-                                                                       function_name_(function_name),
-                                                                       color_code_(color_code) {
-    auto indentation = std::pair<const std::string, const color::Code>("|    ", color_code);
+apriloneil::TraceEntry::TraceEntry(color::Code color_code,
+                                   const std::string &file_name,
+                                   const std::string &function_name,
+                                   const std::string &message) : log_(TraceLog::get_instance()),
+                                                                 file_name_(file_name),
+                                                                 function_name_(function_name),
+                                                                 color_code_(color_code),
+                                                                 verbose_exit_(false) {
+    auto indentation = std::pair<const std::string, const color::Code>("│    ", color_code);
     log_.indentations.push_back(indentation);
-    _trace("├───", "ENTER");
+    if (message == "") {
+        verbose_exit_ = true;
+        _trace("├───", "ENTER");
+    } else {
+        _trace("├───", message);
+    }
 }
 
+
 apriloneil::TraceEntry::~TraceEntry() {
-    _trace("└───", "EXIT");
+    if (verbose_exit_) {
+        _trace("└───", "EXIT");
+    }
     log_.indentations.pop_back();
 }
 

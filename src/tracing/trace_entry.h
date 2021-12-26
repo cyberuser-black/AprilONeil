@@ -23,8 +23,9 @@
 
 #define COLOR_CPP color::FG_RED
 #define COLOR_LUA color::FG_GREEN
-#define TRACE_ENTER()  apriloneil::TraceEntryCPP trace_created_with_TRACE_CPP(__FILE_NAME__, __FUNCTION_NAME__)
-#define TRACE_MESSAGE(message) trace_created_with_TRACE_CPP.trace(message)
+#define TRACE_ENTER()  apriloneil::TraceEntryCPP trace_created_with_TRACE_ENTER(__FILE_NAME__, __FUNCTION_NAME__)
+#define TRACE(message)  apriloneil::TraceEntryCPP(__FILE_NAME__, __FUNCTION_NAME__).trace(message)
+#define TRACE_MESSAGE(message) trace_created_with_TRACE_ENTER.trace(message)
 #define TRACE_LUA() apriloneil::TraceEntryLua trace_created_with_TRACE_LUA(__FILE_NAME__, __FUNCTION_NAME__)
 #define TRACE_LUA_MESSAGE(message) trace_created_with_TRACE_LUA.trace(message)
 
@@ -32,7 +33,10 @@ namespace apriloneil {
 
     class TraceEntry {
     public:
-        TraceEntry(color::Code color_code, const std::string &file_name, const std::string &function_name);
+        TraceEntry(color::Code color_code,
+                   const std::string &file_name,
+                   const std::string &function_name,
+                   const std::string &message="");
 
         ~TraceEntry();
 
@@ -48,6 +52,7 @@ namespace apriloneil {
 
         void _trace(const std::string &connector, const std::string &message);
 
+        bool verbose_exit_;
         TraceLog &log_;
         std::string file_name_;
         std::string function_name_;

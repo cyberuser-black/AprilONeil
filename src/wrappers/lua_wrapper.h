@@ -17,5 +17,8 @@ namespace apriloneil {
         static void invoke_rule(const apriloneil::PathToLuaRule &rule);
 
         };
+
+        // API for Lua to call CPP tracing
+        static void API_trace(const std::string& message );
 }
 #endif //APRILONEIL_LUA_WRAPPER_H
