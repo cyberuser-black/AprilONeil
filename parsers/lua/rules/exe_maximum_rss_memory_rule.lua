@@ -42,7 +42,7 @@ function run(exe, max_rss, exes_pids)
         if vmrss_table == nil then
             goto continue
         end
-        parsed_data_rss = tonumber(vmrss_table[1])
+        parsed_data_rss = vmrss_table[1]
         if parsed_data_rss > max_rss then
             print('[Lua] [exe_maximum_rss_memory_rule] [action] VmRSS memory anomaly detected! Expected less than ' .. max_rss .. ', got ' .. parsed_data_rss)
         end

@@ -97,9 +97,10 @@ name = "fd"
 
 function parse(data)
     print("[Lua] [/proc/<pid>/fd] parse(data) "..name.."...")
-    parsed_data = cyberlib.parsers_helpers.parse_list_dir_to_links(data)
---     for k, v in pairs(parsed_data) do
---         print(k, v)
---     end
-    return parsed_data
+    local parsed_data = cyberlib.parsers_helpers.parse_list_dir_to_links(data)
+    local new_parsed_data = {}
+    for k, v in pairs(parsed_data) do
+        new_parsed_data[tonumber(k)] = v
+    end
+    return new_parsed_data
 end

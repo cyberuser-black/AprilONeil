@@ -29,10 +29,10 @@ function run(pid, allowed_uids, allowed_gids)
     parsed_data_uid = parsed_data['Uid']
     parsed_data_gid = parsed_data['Gid']
     for j=1, #parsed_data_uid do
-        if tonumber(parsed_data_uid[j]) ~= allowed_uids[j] then
+        if parsed_data_uid[j] ~= allowed_uids[j] then
             print('[Lua] [pid_constant_uid_gid_rule] [action] invalid uid[' .. j .. '], got ' .. parsed_data_uid[j] .. ', expected ' .. allowed_uids[j])
         end
-        if tonumber(parsed_data_gid[j]) ~= allowed_gids[j] then
+        if parsed_data_gid[j] ~= allowed_gids[j] then
             print('[Lua] [pid_constant_uid_gid_rule] [action] invalid gid[' .. j .. '], got ' .. parsed_data_gid[j] .. ', expected ' .. allowed_gids[j])
         end
     end

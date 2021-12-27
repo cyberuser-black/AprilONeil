@@ -28,7 +28,7 @@ function run(max_cpu_diff, temp_file_name)
         return
     end
     local new_cpu_data = cpu_parsed_data['cpu']
-    local diff = 100 * (tonumber(new_cpu_data[1]) + tonumber(new_cpu_data[3])) / (tonumber(new_cpu_data[1]) + tonumber(new_cpu_data[3]) + tonumber(new_cpu_data[4]))
+    local diff = 100 * (new_cpu_data[1] + new_cpu_data[3]) / (new_cpu_data[1] + new_cpu_data[3] + new_cpu_data[4])
 
     print('[Lua] [system_cpu_usage] loading and replacing old data')
     local old_diff = cyberlib.temp.replace_data(temp_file_name, diff)

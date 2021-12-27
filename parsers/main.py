@@ -34,8 +34,8 @@ def test_parser():
     3 = Readlink
     """
     pid = 9202
-    proc_path = f"/proc/{pid}/ns"
-    run_lua_parser(proc_path, io_operation=2)
+    proc_path = f"/proc/vmstat"
+    run_lua_parser(proc_path, io_operation=1)
 
 
 def test_rule():

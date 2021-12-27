@@ -150,5 +150,8 @@ name = 'meminfo'
 function parse(data)
     print("[Lua] [/proc/meminfo] parse(data) " .. name .. "...")
     local parsed_data = cyberlib.parsers_helpers.parse_key_val_style(data)
+    for k, v in pairs(parsed_data) do
+        parsed_data[k] = tonumber(v)
+    end
     return parsed_data
 end

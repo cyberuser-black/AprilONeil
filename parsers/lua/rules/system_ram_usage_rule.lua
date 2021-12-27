@@ -27,8 +27,8 @@ function run(max_ram_diff, temp_file_name)
         print('[Lua] [system_ram_usage] [action] data is not ready for /proc/meminfo.')
         return
     end
-    local memTotal = tonumber(ram_parsed_data['MemTotal'])
-    local memFree = tonumber(ram_parsed_data['MemFree'])
+    local memTotal = ram_parsed_data['MemTotal']
+    local memFree = ram_parsed_data['MemFree']
     local diff = 100 * (memTotal - memFree) / memTotal
 
 

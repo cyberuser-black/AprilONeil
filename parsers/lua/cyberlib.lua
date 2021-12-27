@@ -12,6 +12,7 @@ local temp = {}
 local utils = {}
 local rules_helpers = {}
 local main_parser_helpers = {}
+local lambdas = {}
 
 cyberlib = {}
 cyberlib.parsers_helpers = parsers_helpers
@@ -19,6 +20,7 @@ cyberlib.rules_helpers = rules_helpers
 cyberlib.utils = utils
 cyberlib.temp = temp
 cyberlib.main_parser_helpers = main_parser_helpers
+cyberlib.lambdas = lambdas
 -------------------------------------------------------------------------------
 
 -- root api class
@@ -453,5 +455,15 @@ function main_parser_helpers.format_data_path_to_parser_path(data_path)
 end
 
 ------------------------------------------------------------------------------
+-- lambda function for parsers
+lambdas.id = function(v) return v end
+lambdas.decstrtodecnumber = function(v) return tonumber(v) end
+lambdas.hexstrtodecnumber = function(v) return tonumber(v, 16) end
+lambdas.str_at = function(str, index) return string.sub(str, index, index) end
+lambdas.list_to_list_of_numbers = function(list) for k, v in pairs(list) do list[k] = tonumber(v) end return list end
+lambdas.list_to_number_and_id = function(list) return {[1] = tonumber(list[1]), [2] = list[2]} end
+lambdas.list_first_value_to_number = function(list) return tonumber(list[1]) end
+lambdas.list_first_value_to_id = function(list) return list[1] end
+lambdas.list_first_value_from_hex_to_dec = function(list) return tonumber(list[1], 16) end
 
 return cyberlib

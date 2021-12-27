@@ -32,7 +32,7 @@ function run()
         end
         parsed_data = parsed_data['Uid']
         for j, uid in pairs(parsed_data) do
-            if uid == '0' then
+            if uid == 0 then
                 num_of_rooted_terminals = num_of_rooted_terminals + 1
                 goto continue
             end

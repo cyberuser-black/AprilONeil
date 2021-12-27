@@ -60,6 +60,92 @@
 --Mems_allowed_list:      0
 --voluntary_ctxt_switches:        150
 --nonvoluntary_ctxt_switches:     545
+
+-- output example:
+
+-- 	VmPeak={
+-- 		0,
+-- 		'kB'
+-- 	},
+-- 	Tgid=9202,
+-- 	Mems_allowed=1,
+-- 	SigPnd=0,
+-- 	VmRSS={
+-- 		2796,
+-- 		'kB'
+-- 	},
+-- 	Name='bash',
+-- 	VmLib={
+-- 		0,
+-- 		'kB'
+-- 	},
+-- 	FDSize=4,
+-- 	SigBlk=0,
+-- 	Gid={
+-- 		1000,
+-- 		1000,
+-- 		1000,
+-- 		1000
+-- 	},
+-- 	CapPrm=0,
+-- 	Uid={
+-- 		1000,
+-- 		1000,
+-- 		1000,
+-- 		1000
+-- 	},
+-- 	Pid=9202,
+-- 	VmExe={
+-- 		1040,
+-- 		'kB'
+-- 	},
+-- 	State='S',
+-- 	TracerPid=0,
+-- 	SigIgn=0,
+-- 	Mems_allowed_list=0,
+-- 	CapEff=0,
+-- 	voluntary_ctxt_switches=150,
+-- 	CapBnd=137438953471,
+-- 	VmStk={
+-- 		0,
+-- 		'kB'
+-- 	},
+-- 	ShdPnd=0,
+-- 	Threads={
+-- 		1
+-- 	},
+-- 	VmHWM={
+-- 		0,
+-- 		'kB'
+-- 	},
+-- 	Cpus_allowed=255,
+-- 	SigQ={
+-- 		queued_signals=0,
+-- 		allowed_queued_signals=0
+-- 	},
+-- 	PPid=9201,
+-- 	Groups={
+-- 	},
+-- 	SigCgt=0,
+-- 	VmData={
+-- 		0,
+-- 		'kB'
+-- 	},
+-- 	CapInh=0,
+-- 	VmSize={
+-- 		15276,
+-- 		'kB'
+-- 	},
+-- 	VmLck={
+-- 		0,
+-- 		'kB'
+-- 	},
+-- 	nonvoluntary_ctxt_switches=545,
+-- 	VmPTE={
+-- 		0,
+-- 		'kB'
+-- 	}
+
 --
 --The fields are as follows:
 --
@@ -244,7 +330,63 @@
 --                     Number of voluntary and involuntary context
 --                     switches (since Linux 2.6.23).
 
-
+local keys_lambdas = {
+    ['Name'] = cyberlib.lambdas.list_first_value_to_id,
+    ['Umask'] = cyberlib.lambdas.list_first_value_to_id,
+    ['State'] = cyberlib.lambdas.list_first_value_to_id,
+    ['Tgid'] = cyberlib.lambdas.list_first_value_to_number,
+    ['Ngid'] = cyberlib.lambdas.list_first_value_to_number,
+    ['Pid'] = cyberlib.lambdas.list_first_value_to_number,
+    ['PPid'] = cyberlib.lambdas.list_first_value_to_number,
+    ['TracerPid'] = cyberlib.lambdas.list_first_value_to_number,
+    ['Uid'] = cyberlib.lambdas.list_to_list_of_numbers,
+    ['Gid'] = cyberlib.lambdas.list_to_list_of_numbers,
+    ['FDSize'] = cyberlib.lambdas.list_first_value_to_number,
+    ['Groups'] = cyberlib.lambdas.list_to_list_of_numbers,
+    ['NStgid'] = cyberlib.lambdas.list_first_value_to_number,
+    ['NSpid'] = cyberlib.lambdas.list_first_value_to_number,
+    ['NSpgid'] = cyberlib.lambdas.list_first_value_to_number,
+    ['NSsid'] = cyberlib.lambdas.list_first_value_to_number,
+    ['VmPeak'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmSize'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmLck'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmPin'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmHWM'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmRSS'] = cyberlib.lambdas.list_to_number_and_id,
+    ['RssAnon'] = cyberlib.lambdas.list_to_number_and_id,
+    ['RssFile'] = cyberlib.lambdas.list_to_number_and_id,
+    ['RssShmem'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmData'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmStk'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmExe'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmLib'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmPTE'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmPMD'] = cyberlib.lambdas.list_to_number_and_id,
+    ['VmSwap'] = cyberlib.lambdas.list_to_number_and_id,
+    ['HugetlbPages'] = cyberlib.lambdas.list_to_number_and_id,
+    ['CoreDumping'] = cyberlib.lambdas.list_first_value_to_number,
+    ['Threads'] = cyberlib.lambdas.list_to_number_and_id,
+    ['SigQ'] = function(list) return {['queued_signals'] = tonumber((cyberlib.utils.split(list[1], '/'))[1]), ['allowed_queued_signals'] = tonumber((cyberlib.utils.split(list[1], '/'))[2])} end,
+    ['SigPnd'] = cyberlib.lambdas.list_first_value_from_hex_to_dec,
+    ['ShdPnd'] = cyberlib.lambdas.list_first_value_from_hex_to_dec,
+    ['SigBlk'] = cyberlib.lambdas.list_first_value_from_hex_to_dec,
+    ['SigIgn'] = cyberlib.lambdas.list_first_value_from_hex_to_dec,
+    ['SigCgt'] = cyberlib.lambdas.list_first_value_from_hex_to_dec,
+    ['CapInh'] = cyberlib.lambdas.list_first_value_from_hex_to_dec,
+    ['CapPrm'] = cyberlib.lambdas.list_first_value_from_hex_to_dec,
+    ['CapEff'] = cyberlib.lambdas.list_first_value_from_hex_to_dec,
+    ['CapBnd'] = cyberlib.lambdas.list_first_value_from_hex_to_dec,
+    ['CapAmb'] = cyberlib.lambdas.list_first_value_from_hex_to_dec,
+    ['NoNewPrivs'] = cyberlib.lambdas.list_first_value_to_number,
+    ['Seccomp'] = cyberlib.lambdas.list_first_value_to_number,
+    ['Speculation_Store_Bypass'] = cyberlib.lambdas.list_first_value_to_id,
+    ['Cpus_allowed'] = cyberlib.lambdas.list_first_value_from_hex_to_dec,
+    ['Cpus_allowed_list'] = cyberlib.lambdas.list_first_value_to_number,
+    ['Mems_allowed'] = cyberlib.lambdas.list_first_value_to_number,
+    ['Mems_allowed_list'] = cyberlib.lambdas.list_first_value_to_number,
+    ['voluntary_ctxt_switches'] = cyberlib.lambdas.list_first_value_to_number,
+    ['nonvoluntary_ctxt_switches'] = cyberlib.lambdas.list_first_value_to_number
+}
 
 
 print("[Lua] [/proc/<pid>/status] running...")
@@ -258,5 +400,9 @@ name = "status"
 function parse(data)
     print("[Lua] [/proc/<pid>/status] parse(data) "..name.."...")
     local parsed_data = cyberlib.parsers_helpers.parse_lines_to_keys_and_lists(data)
-    return parsed_data
+    local new_parsed_data = {}
+    for key, list in pairs(parsed_data) do
+        new_parsed_data[key] = keys_lambdas[key](list)
+    end
+    return new_parsed_data
 end

@@ -43,7 +43,7 @@ function run(exe, max_threads, exes_pids)
         if threads_table == nil then
             goto continue
         end
-        parsed_data_threads = tonumber(threads_table[1])
+        parsed_data_threads = threads_table[1]
         if parsed_data_threads > max_threads then
             print('[Lua] [exe_num_of_threads_rule] [action] Too many threads for pid ' .. pids[i] .. '! Expected less than ' .. max_threads .. ', got ' .. parsed_data_threads)
         end
