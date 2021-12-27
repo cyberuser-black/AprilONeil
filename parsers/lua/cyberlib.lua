@@ -1,4 +1,4 @@
-print("[Lua] [cyberlib] running...")
+print("[Lua] [cyberlib] required...")
 package.path = package.path .. ";./lua/?.lua"
 package.path = package.path .. ";./lua/data_sources/?.lua"
 package.path = package.path .. ";./lua/data_sources/parsers/?.lua"
@@ -11,12 +11,14 @@ local root_api = {}
 local temp = {}
 local utils = {}
 local rules_helpers = {}
+local main_parser_helpers = {}
 
 cyberlib = {}
 cyberlib.parsers_helpers = parsers_helpers
 cyberlib.rules_helpers = rules_helpers
 cyberlib.utils = utils
 cyberlib.temp = temp
+cyberlib.main_parser_helpers = main_parser_helpers
 -------------------------------------------------------------------------------
 
 -- root api class
@@ -58,28 +60,34 @@ end
 
 -- temp class
 
--- parser_path = '/proc/pid/parser' or '/proc/parser'
-function temp.get_data(parser_path, root_api_operation, pid)
+temp.root_api_operations = {
+    OPEN = 1,
+    LIST_DIR = 2,
+    READ_LINK = 3
+}
+local main_parser_path = 'main_parser'
+-- parser_path = '/proc/<pid>/parser' or '/proc/parser' (<pid> is a real pid)
+function temp.get_data(data_path, root_api_operation)
     -- use this function in rules to call get_data. later will be replaced by
     -- the real function.
-    if pid == nil then
-        pid = ''
+    require_value = require(main_parser_path)
+    if (root_api_operation == temp.root_api_operations.OPEN) then
+        return main_parse(data_path, root_api.readfile(data_path))
+    elseif (root_api_operation == temp.root_api_operations.LIST_DIR) then
+        return main_parse(data_path, root_api.list_dir(data_path))
+    elseif (root_api_operation == temp.root_api_operations.READ_LINK) then
+        return main_parse(data_path, root_api.readlink(data_path))
+    else
+        return nil -- return nill if the data is not ready or the requested operation is illegal.
     end
-    require_value = require(parser_path)
-    if (root_api_operation == 'open') then
-        return parse(root_api.readfile(parser_path:gsub('pid', pid)))
-    elseif (root_api_operation == 'list_dir') then
-        return parse(root_api.list_dir(parser_path:gsub('pid', pid)))
-    elseif (root_api_operation == 'read_link') then
-        return parse(root_api.readlink(parser_path:gsub('pid', pid)))
-    end
-    return nil
 end
 
-function temp.set_data(filename, tbl)
+function temp.set_data(filename, value_to_save)
    local function exportstring( s )
     return string.format("%q", s)
    end
+    tbl = {}
+    tbl.value = value_to_save
     local charS,charE = "   ","\n"
     local file,err = io.open( filename, "wb" )
     if err then return err end
@@ -150,6 +158,15 @@ function temp.set_data(filename, tbl)
     end
     file:write( "}" )
     file:close()
+end
+
+function temp.replace_data(file_path, tbl)
+    local old_data = temp.read_global_variable_from_file(file_path)
+    temp.set_data(file_path, tbl)
+    if old_data == nil then
+        return nil
+    end
+    return old_data['value']
 end
 
 function temp.read_global_variable_from_file(sfile)
@@ -408,5 +425,33 @@ function rules_helpers.get_exe_pids()
     end
     return exe_pids
 end
+
+------------------------------------------------------------------------------
+
+-- helper function for the main_parser.lua file that parser a data path (i.e '/proc/123/status') to
+-- parser path (i.e '/proc/pid/status')
+function main_parser_helpers.format_data_path_to_parser_path(data_path)
+    if data_path == nil then
+        print("[Lua] [cyberlib] data_path is 'nil', illegal data_path value!")
+        return data_path
+    end
+    local split_data_path = utils.split(data_path, '/')
+    if split_data_path == nil or #split_data_path < 3 then
+        return data_path
+    end
+    local possible_pid = split_data_path[2]
+    local possible_pid = possible_pid:match("^%-?%d+$")
+    if possible_pid == nil then
+        return data_path
+    else
+        local new_path = '/' .. split_data_path[1] .. '/pid'
+        for i = 3, #split_data_path do
+            new_path = new_path .. '/' .. split_data_path[i]
+        end
+        return new_path
+    end
+end
+
+------------------------------------------------------------------------------
 
 return cyberlib
