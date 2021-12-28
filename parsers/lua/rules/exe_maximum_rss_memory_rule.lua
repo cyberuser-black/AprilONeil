@@ -1,7 +1,14 @@
 package.path = package.path .. ";./lua/?.lua"
+package.path = package.path .. ";./lua/rules/?.lua"
+
 
 local cyberlib = require ('cyberlib') -- from {PROJECT_DIR}/lua/cyberlib.lua
--- local status_parser = require( './lua/data_sources/parsers/proc/pid/status')
+
+local pid_maximum_rss_memory_rule = {}
+
+local pid_maximum_rss_memory_req = require 'pid_maximum_rss_memory_rule'
+pid_maximum_rss_memory_rule.pre_run = pre_run
+pid_maximum_rss_memory_rule.run = run
 
 print("[Lua] [exe_maximum_rss_memory_rule] required...")
 -- function pre_run()
@@ -33,19 +40,6 @@ function run(exe, max_rss, exes_pids)
         return
     end
     for i=1, #pids do
-        parsed_data = cyberlib.temp.get_data('/proc/' .. pids[i] .. '/status', cyberlib.temp.root_api_operations.OPEN)
-        if parsed_data == nil then
-            print('[Lua] [exe_maximum_rss_memory_rule] [action] data is not ready for /proc/' .. pids[i] .. '/status.')
-            goto continue
-        end
-        local vmrss_table = parsed_data['VmRSS']
-        if vmrss_table == nil then
-            goto continue
-        end
-        parsed_data_rss = vmrss_table[1]
-        if parsed_data_rss > max_rss then
-            print('[Lua] [exe_maximum_rss_memory_rule] [action] VmRSS memory anomaly detected! Expected less than ' .. max_rss .. ', got ' .. parsed_data_rss)
-        end
-        ::continue::
+        pid_maximum_rss_memory_rule.run(pids[i], max_rss):
     end
 end

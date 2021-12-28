@@ -1,7 +1,13 @@
 package.path = package.path .. ";./lua/?.lua"
+package.path = package.path .. ";./lua/rules/?.lua"
 
 local cyberlib = require ('cyberlib') -- from {PROJECT_DIR}/lua/cyberlib.lua
--- local status_parser = require( './lua/data_sources/parsers/proc/pid/status')
+
+local pid_constant_uid_gid_rule = {}
+
+local pid_constant_uid_gid_req = require 'pid_constant_uid_gid_rule'
+pid_constant_uid_gid_rule.pre_run = pre_run
+pid_constant_uid_gid_rule.run = run
 
 print("[Lua] [exe_constant_uid_gid_rule] required...")
 -- function pre_run()
@@ -38,21 +44,6 @@ function run(exe, allowed_uids, allowed_gids, exes_pids)
         return
     end
     for i=1, #pids do
-        parsed_data = cyberlib.temp.get_data('/proc/' .. pids[i] .. '/status', cyberlib.temp.root_api_operations.OPEN)
-        if parsed_data == nil then
-            print('[Lua] [exe_constant_uid_gid_rule] [action] data is not ready for /proc/' .. pids[i] .. '/status.')
-            goto continue
-        end
-        parsed_data_uid = parsed_data['Uid']
-        parsed_data_gid = parsed_data['Gid']
-        for j=1, #parsed_data_uid do
-            if parsed_data_uid[j] ~= allowed_uids[j] then
-                print('[Lua] [exe_constant_uid_gid_rule] [action] invalid uid[' .. j .. '], got ' .. parsed_data_uid[j] .. ', expected ' .. allowed_uids[j])
-            end
-            if parsed_data_gid[j] ~= allowed_gids[j] then
-                print('[Lua] [exe_constant_uid_gid_rule] [action] invalid gid[' .. j .. '], got ' .. parsed_data_gid[j] .. ', expected ' .. allowed_gids[j])
-            end
-        end
-        ::continue::
+        pid_constant_uid_gid_rule.run(pids[i], allowed_uids, allowed_gids)
     end
 end
