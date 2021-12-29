@@ -402,7 +402,11 @@ function parse(data)
     local parsed_data = cyberlib.parsers_helpers.parse_lines_to_keys_and_lists(data)
     local new_parsed_data = {}
     for key, list in pairs(parsed_data) do
-        new_parsed_data[key] = keys_lambdas[key](list)
+        if keys_lambdas[key] ~= nil then
+            new_parsed_data[key] = keys_lambdas[key](list)
+        else
+            print("[Lua] [/proc/<pid>/status] parse(data) unknown key:"..key.."...")
+        end    
     end
     return new_parsed_data
 end
