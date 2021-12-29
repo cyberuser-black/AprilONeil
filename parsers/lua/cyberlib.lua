@@ -56,7 +56,7 @@ function root_api.list_links_dir(path)
     pfile:close()
     i = 1
     for k, v in pairs(t) do
-        link = root_api.readlink(path .. v)
+        link = root_api.readlink(path .. '/' .. v)
         if link ~= nil then
             links_t[i] = link
             i = i + 1
@@ -225,6 +225,12 @@ end
 
 -- utils class
 
+function utils.table_len(T)
+  local count = 0
+  for _ in pairs(T) do count = count + 1 end
+  return count
+end
+
 function utils.get_proc_path(parser_name, pid)
     -- gets the proc_path of the given parser name and pid (if given)
     if pid == 'null' or pid == nil then
@@ -271,26 +277,6 @@ end
 function utils.dump(o)
     pp.print(o, '\t')
 end
-
--- Lua implementation of PHP scandir function
--- NOTE: Deprecated because similarity to root_api.list_dir function
--- function utils.scandir(directory)
---
--- --     print('scandir...')
---     local i, t = 0, {}
---     --print('ls -a "'..directory..'"')
--- --     local pfile = popen('ls -a "' .. directory .. '"')
---     local pfile = temp.get_data(directory, 2)
---
---     utils.dump(pfile)
---     --print(pfile:lines())
---     for filename in pfile:lines() do
---         --print(filename)
---         i = i + 1
---         t[i] = filename
---     end
---     return t
--- end
 
 ------------------------------------------------------------------------------
 

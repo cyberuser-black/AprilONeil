@@ -31,8 +31,6 @@ function run(exe, max_rss, exes_pids)
     end
     if exes_pids == nil then
         exe_pids = cyberlib.rules_helpers.get_exe_pids()
-    else
-        exe_pids = exes_pids
     end
     local pids = exe_pids[exe]
     if pids == nil then
