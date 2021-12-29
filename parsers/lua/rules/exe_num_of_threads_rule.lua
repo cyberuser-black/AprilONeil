@@ -39,7 +39,6 @@ function run(exe, max_threads, exes_pids)
         print('[Lua] [exe_num_of_threads_rule] [action] no pids for exe ' .. exe .. '.')
         return
     end
-    print("number of bashinstances: " ..#pids)
     for i=1, #pids do
         pid_num_of_threads_rule.run(pids[i], max_threads)
     end

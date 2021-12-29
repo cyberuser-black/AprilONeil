@@ -25,9 +25,8 @@ cyberlib.lambdas = lambdas
 
 -- root api class
 
-function root_api.readlink(parser_name, pid)
+function root_api.readlink(path)
     -- mimics a root_api protocol to readlink.
-    local path = utils.get_proc_path(parser_name, pid)
     local popen = io.popen
     local pfile = popen('readlink "'..path..'" 2>/dev/null')
     return pfile:read()
@@ -44,10 +43,32 @@ function root_api.readfile(path)
     return content
 end
 
+function root_api.list_links_dir(path)
+    -- mimics a root_api protocol to list links in a dir
+    local i, t, links_t, link, popen = 0, {}, {}, '', io.popen
+    local pfile = popen('ls -a "'..path..'"')
+    for filename in pfile:lines() do
+        if(filename ~= '..' and filename ~= '.') then
+            i = i + 1
+            t[i] = filename
+        end
+    end
+    pfile:close()
+    i = 1
+    for k, v in pairs(t) do
+        link = root_api.readlink(path .. v)
+        if link ~= nil then
+            links_t[i] = link
+            i = i + 1
+        end
+    end
+    return links_t
+end
+
 function root_api.list_dir(path)
     -- mimics a root_api protocol to list a dir
     local i, t, popen = 0, {}, io.popen
-    local pfile = popen('ls -la "'..path..'"')
+    local pfile = popen('ls -a "'..path..'"')
     for filename in pfile:lines() do
         if(filename ~= '..' and filename ~= '.') then
             i = i + 1
@@ -65,7 +86,8 @@ end
 temp.root_api_operations = {
     OPEN = 1,
     LIST_DIR = 2,
-    READ_LINK = 3
+    READ_LINK = 3,
+    LIST_LINKS_DIR = 4
 }
 local main_parser_path = 'main_parser'
 -- parser_path = '/proc/<pid>/parser' or '/proc/parser' (<pid> is a real pid)
@@ -76,9 +98,11 @@ function temp.get_data(data_path, root_api_operation)
     if (root_api_operation == temp.root_api_operations.OPEN) then
         return main_parse(data_path, root_api.readfile(data_path))
     elseif (root_api_operation == temp.root_api_operations.LIST_DIR) then
-        return main_parse(data_path, root_api.list_dir(data_path))
+        return root_api.list_dir(data_path)
     elseif (root_api_operation == temp.root_api_operations.READ_LINK) then
-        return main_parse(data_path, root_api.readlink(data_path))
+        return root_api.readlink(data_path)
+    elseif (root_api_operation == temp.root_api_operations.LIST_LINKS_DIR) then
+        return root_api.list_links_dir(data_path)
     else
         return nil -- return nill if the data is not ready or the requested operation is illegal.
     end
@@ -163,15 +187,15 @@ function temp.set_data(filename, value_to_save)
 end
 
 function temp.replace_data(file_path, tbl)
-    local old_data = temp.read_global_variable_from_file(file_path)
+    local old_data = temp.get_data_from_file(file_path)
     temp.set_data(file_path, tbl)
     if old_data == nil then
         return nil
     end
-    return old_data['value']
+    return old_data
 end
 
-function temp.read_global_variable_from_file(sfile)
+function temp.get_data_from_file(sfile)
     local ftables,err = loadfile( sfile )
     if err then return _,err end
     local tables = ftables()
@@ -190,7 +214,11 @@ function temp.read_global_variable_from_file(sfile)
         tables[idx][v[2]],tables[idx][v[1]] =  tables[idx][v[1]],nil
      end
     end
-    return tables[1]
+    if tables[1] ~= nil then
+        return tables[1]['value']
+    else
+        return nil
+    end
 end
 
 ----------------------------------------------------------------------------
@@ -245,20 +273,24 @@ function utils.dump(o)
 end
 
 -- Lua implementation of PHP scandir function
-function utils.scandir(directory)
-    --print('scandir...')
-    local i, t, popen = 0, {}, io.popen
-    --print('ls -a "'..directory..'"')
-    local pfile = popen('ls -a "' .. directory .. '"')
-    --print(pfile:lines())
-    for filename in pfile:lines() do
-        --print(filename)
-        i = i + 1
-        t[i] = filename
-    end
-    pfile:close()
-    return t
-end
+-- NOTE: Deprecated because similarity to root_api.list_dir function
+-- function utils.scandir(directory)
+--
+-- --     print('scandir...')
+--     local i, t = 0, {}
+--     --print('ls -a "'..directory..'"')
+-- --     local pfile = popen('ls -a "' .. directory .. '"')
+--     local pfile = temp.get_data(directory, 2)
+--
+--     utils.dump(pfile)
+--     --print(pfile:lines())
+--     for filename in pfile:lines() do
+--         --print(filename)
+--         i = i + 1
+--         t[i] = filename
+--     end
+--     return t
+-- end
 
 ------------------------------------------------------------------------------
 
@@ -371,21 +403,21 @@ function parsers_helpers.parse_lines_to_lists_of_lists(data)
     return parsed_data
 end
 
-function parsers_helpers.parse_list_dir_to_links(data)
-    -- input - data of 'ls -la'
-    -- output - parses an output data of the command 'ls -la' to keys and
-    -- values of the links in this list
-    local list_dir = data
-    local parsed_links = {}
-    for k, v in pairs(list_dir) do
-        split_v = utils.split(v, '>')
-        split_new_k = utils.split(split_v[1], ' ')
-        if split_new_k[9] ~= nil then
-            parsed_links[split_new_k[9]] = split_v[2]
-        end
-    end
-    return parsed_links
-end
+-- function parsers_helpers.parse_list_dir_to_links(data)
+--     -- input - data of 'ls -la'
+--     -- output - parses an output data of the command 'ls -la' to keys and
+--     -- values of the links in this list
+--     local list_dir = data
+--     local parsed_links = {}
+--     for k, v in pairs(list_dir) do
+--         split_v = utils.split(v, '>')
+--         split_new_k = utils.split(split_v[1], ' ')
+--         if split_new_k[9] ~= nil then
+--             parsed_links[split_new_k[9]] = split_v[2]
+--         end
+--     end
+--     return parsed_links
+-- end
 
 function parsers_helpers.parse_list_dir_to_regular_list(data)
     -- input - data of 'ls -la'
@@ -404,19 +436,51 @@ end
 ----------------------------------------------------------------------------
 
 -- rules helpers class
+local temp_exe_pids_data = 'temp_exe_pids_data'
+local temp_pids_data = 'temp_pids_data'
 
 function rules_helpers.get_exe_pids()
     -- returns a table of exe's, and for each exe a list of it's pid's.
-    print('get_exe_pids...')
+
+    -- try to load old data (in future the data we'll store the data in the C++ module cache and ask for it via the get_data)
+    -- In future all cache mechanism will be managed by the C++ module.
+
+    local new_pids = temp.get_data('/proc', temp.root_api_operations.LIST_DIR)
+    local old_pids = temp.replace_data(temp_pids_data, new_pids)
+
+    -- checks whether to ask for new exe's list
+    local get_new_exes = false
+    if old_pids == nil then
+        old_pids = {}
+    end
+    if #new_pids == #old_pids then
+        for i = 1, #new_pids do
+            if new_pids[i] ~= old_pids[i] then
+                print("[Lua] [cyberlib.rules_helpers.get_exe_pids] getting new exes...")
+                get_new_exes = true
+                break
+            end
+        end
+    else
+        print("[Lua] [cyberlib.rules_helpers.get_exe_pids] getting new exes...")
+        get_new_exes = true
+    end
+
     local exe_pids = {}
-    local proc = utils.scandir('/proc')
-    for i, filename in pairs(proc) do
+    if get_new_exes == false then
+        exe_pids = temp.get_data_from_file(temp_exe_pids_data)
+        if exe_pids ~= nil then
+            print("[Lua] [cyberlib.rules_helpers.get_exe_pids] no change in pid list, return old exes...")
+            return exe_pids
+        else
+            print("[Lua] [cyberlib.rules_helpers.get_exe_pids] getting new exes...")
+        end
+    end
+    for i, filename in pairs(new_pids) do
         pid = tonumber(filename)
         if (pid ~= nil) then
-            local ls_exe = root_api.readlink('exe', pid)
-            if ls_exe ~= nil then
-                local ls_exe_split = utils.split(ls_exe, " ");
-                local exe = ls_exe_split[#ls_exe_split]
+            local exe = temp.get_data('/proc/' .. pid .. '/exe', 3)
+            if exe ~= nil then
                 if exe_pids[exe] == nil then
                     exe_pids[exe] = { pid }
                 else
@@ -425,6 +489,7 @@ function rules_helpers.get_exe_pids()
             end
         end
     end
+    temp.set_data(temp_exe_pids_data, exe_pids)
     return exe_pids
 end
 

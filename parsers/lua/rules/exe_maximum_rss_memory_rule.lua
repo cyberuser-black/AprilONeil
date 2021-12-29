@@ -17,7 +17,7 @@ print("[Lua] [exe_maximum_rss_memory_rule] required...")
 --     return true
 -- end
 
-local default_max_rss = 1000 -- in KB
+local default_max_rss = 100 -- in KB
 
 -- local default_exe = '/usr/bin/bash' -- for linux
 local default_exe = '/bin/dash' -- for windows with wsl
@@ -40,6 +40,6 @@ function run(exe, max_rss, exes_pids)
         return
     end
     for i=1, #pids do
-        pid_maximum_rss_memory_rule.run(pids[i], max_rss):
+        pid_maximum_rss_memory_rule.run(pids[i], max_rss)
     end
 end
