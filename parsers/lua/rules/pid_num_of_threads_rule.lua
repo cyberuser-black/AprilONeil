@@ -19,6 +19,7 @@ function run(pid, max_threads)
     if max_threads == nil then
         max_threads = default_max_threads
     end
+
     parsed_data = cyberlib.temp.get_data('/proc/' .. pid .. '/status', cyberlib.temp.root_api_operations.OPEN)
     if parsed_data == nil then
         print('[Lua] [pid_num_of_threads_rule] [action] data is not ready for /proc/' .. pid .. '/status.')

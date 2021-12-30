@@ -32,6 +32,7 @@ def test_parser():
     1 = Open file
     2 = List dir
     3 = Readlink
+    4 = List Links Dir (lists all links in dir)
     """
     pid = 9202
     proc_path = f"/proc/vmstat"
@@ -44,11 +45,13 @@ def test_rule():
     """
     # rule_name = 'exe_constant_uid_gid_rule'
     # rule_name = 'exe_maximum_rss_memory_rule'
-    rule_name = 'exe_num_of_threads_rule'
+    # rule_name = 'exe_num_of_threads_rule'
     # rule_name = 'system_cpu_usage_rule'
     # rule_name = 'system_ram_usage_rule'
     # rule_name = 'exe_instances_threads_uid_gid_rss_rule'
     # rule_name = 'system_ram_and_cpu_usage_rule'
+    rule_name = 'exes_whitelist_rule'
+
     run_lua_rule(rule_name)
 
 
