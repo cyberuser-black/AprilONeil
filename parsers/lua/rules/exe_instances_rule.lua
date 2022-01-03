@@ -11,7 +11,7 @@ print("[Lua] [exe_instances_rule] required...")
 -- end
 
 local default_max_instances = 12
-local default_min_instances = 1
+local default_min_instances = 7
 
 -- default_exe = '/usr/bin/bash' -- for linux
 local default_exe = '/bin/dash' -- for windows with wsl
@@ -29,6 +29,7 @@ function run(exe, max_instances, min_instances, exes_pids)
     if exes_pids == nil then
         exe_pids = cyberlib.rules_helpers.get_exe_pids()
     end
+    cyberlib.utils.dump(exe_pids['not_ready_pids'])
     local pids = exe_pids[exe]
     if pids == nil then
         print('[Lua] [exe_instances_rule] [action] no pids for exe ' .. exe .. '.')

@@ -439,6 +439,13 @@ function rules_helpers.get_exe_pids()
     if old_pids == nil then
         old_pids = {}
     end
+
+    if new_pids == nil or #new_pids == 0 then  -- in first iteration, the new_pids will be nil
+        print("[Lua] [cyberlib.rules_helpers.get_exe_pids] no new pid's, returns an empty table...")
+        return {}
+    end
+
+    -- TODO: check if new pids are nil
     if #new_pids == #old_pids then
         for i = 1, #new_pids do
             if new_pids[i] ~= old_pids[i] then
@@ -466,12 +473,13 @@ function rules_helpers.get_exe_pids()
         pid = tonumber(filename)
         if (pid ~= nil) then
             local exe = temp.get_data('/proc/' .. pid .. '/exe', 3)
-            if exe ~= nil then
-                if exe_pids[exe] == nil then
-                    exe_pids[exe] = { pid }
-                else
-                    table.insert(exe_pids[exe], pid)
-                end
+            if exe == nil then
+                exe = 'not_ready_pids' -- if the exe of the pid is nil, we save the pid in special key of not ready pid.
+            end
+            if exe_pids[exe] == nil then
+                exe_pids[exe] = { pid }
+            else
+                table.insert(exe_pids[exe], pid)
             end
         end
     end
