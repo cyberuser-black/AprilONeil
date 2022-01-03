@@ -22,15 +22,17 @@ local default_max_threads = 0
 -- local default_exe = '/usr/bin/bash' -- for linux
 local default_exe = '/bin/dash' -- for windows with wsl
 
-function run(exe, max_threads, exes_pids)
+function run(exe, max_threads, exe_pids_arg)
     if exe == nil then
         exe = default_exe
     end
     if max_threads == nil then
         max_threads = default_max_threads
     end
-    if exes_pids == nil then
+    if exe_pids_arg == nil then
         exe_pids = cyberlib.rules_helpers.get_exe_pids()
+    else
+        exe_pids = exe_pids_arg
     end
     local pids = exe_pids[exe]
     if pids == nil then

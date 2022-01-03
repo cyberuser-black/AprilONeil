@@ -10,7 +10,7 @@ def run_lua_parser(proc_path: str, io_operation: int = 1):
     :param pid: The pid to run the parser with.
     """
     while True:
-        subprocess.call(['lua', f'{os.getcwd()}/lua/data_sources/parsers/python_parser_wrapper.lua', proc_path, str(io_operation)])
+        subprocess.call(['luajit', f'{os.getcwd()}/lua/data_sources/parsers/python_parser_wrapper.lua', proc_path, str(io_operation)])
         time.sleep(3)
 
 
@@ -19,7 +19,7 @@ def run_lua_rule(rule_name: str):
     :param rule_name: ...
     """
     while True:
-        subprocess.call(['lua', '-e', f"dofile'{os.getcwd()}/lua/rules/{rule_name}.lua' run()"])
+        subprocess.call(['luajit', '-e', f"dofile'{os.getcwd()}/lua/rules/{rule_name}.lua' run()"])
         # subprocess.call(['lua', f"{os.getcwd()}/lua/rules/{rule_name}.lua"])
         time.sleep(3)
 
@@ -44,12 +44,12 @@ def test_rule():
     To test a rule, change the rule name value to the rule you wish to test.
     """
     # rule_name = 'exe_constant_uid_gid_rule'
-    rule_name = 'exe_instances_rule'
-    # rule_name = 'exe_maximum_rss_memor_rule'
+    # rule_name = 'exe_instances_rule'
+    # rule_name = 'exe_maximum_rss_memory_rule'
     # rule_name = 'exe_num_of_threads_rule'
     # rule_name = 'system_cpu_usage_rule'
     # rule_name = 'system_ram_usage_rule'
-    # rule_name = 'exe_instances_threads_uid_gid_rss_rule'
+    rule_name = 'exe_instances_threads_uid_gid_rss_rule'
     # rule_name = 'system_ram_and_cpu_usage_rule'
     # rule_name = 'exes_whitelist_rule'
 

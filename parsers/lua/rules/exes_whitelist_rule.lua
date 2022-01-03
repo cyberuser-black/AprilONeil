@@ -16,15 +16,18 @@ local default_list_of_allowed_exes = {
     ['/bin/dash'] = true
 }
 
-function run(list_of_constant_exes, list_of_allowed_exes, exes_pids)
+function run(list_of_constant_exes, list_of_allowed_exes, exe_pids_arg)
     if list_of_constant_exes == nil then
         list_of_constant_exes = default_list_of_constant_exes
     end
     if list_of_allowed_exes == nil then
         list_of_allowed_exes = default_list_of_allowed_exes
     end
-    if exes_pids == nil then
+    local exe_pids = {}
+    if exe_pids_arg == nil then
         exe_pids = cyberlib.rules_helpers.get_exe_pids()
+    else
+        exe_pids = exe_pids_arg
     end
 
     for exe, pids_list in pairs(exe_pids) do

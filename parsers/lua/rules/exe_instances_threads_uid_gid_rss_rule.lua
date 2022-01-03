@@ -32,13 +32,13 @@ print("[Lua] [exe_instances_threads_uid_gid_rss_rule] required...")
 local exe = '/bin/dash' -- for windows with wsl
 
 function run()
-    local exe_pids = cyberlib.rules_helpers.get_exe_pids()
-    if exe_pids == nil then
+    local exes_pids = cyberlib.rules_helpers.get_exe_pids()
+    if exes_pids == nil or exes_pids[exe] == nil then
         print("[Lua] [exe_instances_threads_uid_gid_rss_rule] no pids for exe " .. exe .. "...")
         return
     end
-    local exe_pids = exe_pids[exe]
-    exe_instances_rule.run(nil, nil, nil, exe_pids)
+    local exe_pids = exes_pids[exe]
+    exe_instances_rule.run(nil, nil, nil, exes_pids)
     for i = 1, #exe_pids do
         pid_constant_uid_gid_rule.run(exe_pids[i])
         pid_num_of_threads_rule.run(exe_pids[i])

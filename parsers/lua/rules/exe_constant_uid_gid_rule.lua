@@ -23,7 +23,7 @@ local default_allowed_gids = {1000, 1000, 1000, 1000}
 -- default_exe = '/usr/bin/bash' -- for linux
 local default_exe = '/bin/dash' -- for windows with wsl
 
-function run(exe, allowed_uids, allowed_gids, exes_pids)
+function run(exe, allowed_uids, allowed_gids, exe_pids_arg)
     if exe == nil then
         exe = default_exe
     end
@@ -33,10 +33,12 @@ function run(exe, allowed_uids, allowed_gids, exes_pids)
     if allowed_gids == nil then
         allowed_gids = default_allowed_gids
     end
-    if exes_pids == nil then
+    local exe_pids = {}
+    if exe_pids_arg == nil then
         exe_pids = cyberlib.rules_helpers.get_exe_pids()
+    else
+        exe_pids = exe_pids_arg
     end
-
     local pids = exe_pids[exe]
     if pids == nil then
         print('[Lua] [exe_constant_uid_gid_rule] [action] no pids for exe ' .. exe .. '.')
